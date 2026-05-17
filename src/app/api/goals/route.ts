@@ -292,6 +292,12 @@ export async function POST(request: NextRequest) {
 
   try {
     if (parsed.data.action === 'createSheet') {
+      const existingSheet = await fetchCurrentSheet(supabase, userId);
+
+      if (existingSheet) {
+        return NextResponse.json({ sheet: existingSheet });
+      }
+
       const { data, error } = await supabase
         .from('goal_sheets')
         .insert({
@@ -306,7 +312,9 @@ export async function POST(request: NextRequest) {
         return jsonError(error.message);
       }
 
-      return NextResponse.json({ sheet: data });
+      const sheet = await fetchSheetById(supabase, (data as GoalSheet).id);
+
+      return NextResponse.json({ sheet });
     }
 
     if (parsed.data.action === 'createGoal') {

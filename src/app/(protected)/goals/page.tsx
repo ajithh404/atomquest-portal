@@ -16,6 +16,10 @@ interface GoalsResponse {
   thrustAreas: ThrustArea[];
 }
 
+interface CreateSheetResponse {
+  sheet: GoalSheetWithGoals;
+}
+
 async function readApiError(response: Response): Promise<string> {
   const body = (await response.json().catch(() => null)) as { error?: string } | null;
   return body?.error ?? 'Request failed.';
@@ -68,6 +72,8 @@ export default function GoalsPage() {
         throw new Error(await readApiError(response));
       }
 
+      const data = (await response.json()) as CreateSheetResponse;
+      setSheet(data.sheet);
       toast.success('Goal sheet created.');
       await loadGoals();
     } catch (error) {
