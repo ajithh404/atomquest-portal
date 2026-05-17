@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server';
 import type { GoalSheet, Profile } from '@/lib/types';
 import { CURRENT_CYCLE_YEAR } from '@/lib/validations';
 
+const postgresUuidSchema = z
+  .string()
+  .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 'Invalid profile UUID.');
+
 const adminPatchSchema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('updateWindow'),
@@ -12,8 +16,8 @@ const adminPatchSchema = z.discriminatedUnion('action', [
   }),
   z.object({
     action: z.literal('reassignManager'),
-    profileId: z.string().uuid(),
-    managerId: z.string().uuid().nullable(),
+    profileId: postgresUuidSchema,
+    managerId: postgresUuidSchema.nullable(),
   }),
   z.object({
     action: z.literal('unlockSheet'),
@@ -124,6 +128,28 @@ export async function PATCH(request: NextRequest) {
   if (parsed.data.action === 'reassignManager') {
     if (parsed.data.managerId === parsed.data.profileId) {
       return jsonError('An employee cannot report to themselves.');
+    }
+
+    const { data: targetProfile, error: targetError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', parsed.data.profileId)
+      .single();
+
+    if (targetError || !targetProfile) {
+      return jsonError('Profile to update was not found.', 404);
+    }
+
+    if (parsed.data.managerId) {
+      const { data: managerProfile, error: managerError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', parsed.data.managerId)
+        .single();
+
+      if (managerError || !managerProfile) {
+        return jsonError('Selected manager profile was not found.', 404);
+      }
     }
 
     const { error } = await supabase
