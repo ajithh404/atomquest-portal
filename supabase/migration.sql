@@ -187,36 +187,24 @@ CREATE POLICY "Users can view own profile"
 
 CREATE POLICY "Managers can view direct reports profiles"
   ON public.profiles FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'manager'
-    )
-    AND manager_id = auth.uid()
-  );
+  USING (manager_id = auth.uid());
 
 CREATE POLICY "Admins can view all profiles"
   ON public.profiles FOR SELECT
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
-
-CREATE POLICY "Admins can update all profiles"
-  ON public.profiles FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Admins can update all profiles"
+  ON public.profiles FOR UPDATE
+  USING (
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
+  );
 
 -- ----- THRUST AREAS -----
 CREATE POLICY "Anyone authenticated can read active thrust areas"
@@ -226,10 +214,7 @@ CREATE POLICY "Anyone authenticated can read active thrust areas"
 CREATE POLICY "Admins can manage thrust areas"
   ON public.thrust_areas FOR ALL
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ----- GOAL SHEETS -----
@@ -260,10 +245,7 @@ CREATE POLICY "Managers can view direct reports goal sheets"
 CREATE POLICY "Managers can update submitted goal sheets of direct reports"
   ON public.goal_sheets FOR UPDATE
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles mgr
-      WHERE mgr.id = auth.uid() AND mgr.role IN ('manager', 'admin')
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') IN ('manager', 'admin')
     AND EXISTS (
       SELECT 1 FROM public.profiles emp
       WHERE emp.id = employee_id AND emp.manager_id = auth.uid()
@@ -273,19 +255,13 @@ CREATE POLICY "Managers can update submitted goal sheets of direct reports"
 CREATE POLICY "Admins can view all goal sheets"
   ON public.goal_sheets FOR SELECT
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 CREATE POLICY "Admins can update all goal sheets"
   ON public.goal_sheets FOR UPDATE
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ----- GOALS -----
@@ -356,10 +332,7 @@ CREATE POLICY "Managers can update direct reports submitted goals"
 CREATE POLICY "Admins can do everything with goals"
   ON public.goals FOR ALL
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ----- ACHIEVEMENTS -----
@@ -404,10 +377,7 @@ CREATE POLICY "Managers can view direct reports achievements"
 CREATE POLICY "Admins can view all achievements"
   ON public.achievements FOR ALL
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ----- CHECKINS -----
@@ -436,29 +406,20 @@ CREATE POLICY "Managers can CRUD checkins for direct reports"
 CREATE POLICY "Admins can do everything with checkins"
   ON public.checkins FOR ALL
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ----- AUDIT LOGS -----
 CREATE POLICY "Admins can view all audit logs"
   ON public.audit_logs FOR SELECT
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 CREATE POLICY "Admins can insert audit logs"
   ON public.audit_logs FOR INSERT
   WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ----- QUARTERLY WINDOWS -----
@@ -469,10 +430,7 @@ CREATE POLICY "Anyone authenticated can read quarterly windows"
 CREATE POLICY "Admins can manage quarterly windows"
   ON public.quarterly_windows FOR ALL
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 -- ============================================================
