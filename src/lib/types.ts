@@ -77,6 +77,16 @@ export interface Checkin {
   created_at: string;
 }
 
+export interface QuarterlyWindow {
+  id: string;
+  cycle_year: number;
+  quarter: Exclude<Quarter, 'Annual'>;
+  start_date: string;
+  end_date: string;
+  is_open: boolean;
+  created_at: string;
+}
+
 export interface AuditLog {
   id: string;
   table_name: string;

@@ -142,6 +142,41 @@ CREATE OR REPLACE TRIGGER on_goals_updated
   BEFORE UPDATE ON public.goals
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+CREATE OR REPLACE FUNCTION public.prevent_locked_goal_edits()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_sheet_status TEXT;
+  v_role TEXT;
+BEGIN
+  SELECT status INTO v_sheet_status
+  FROM public.goal_sheets
+  WHERE id = OLD.sheet_id;
+
+  v_role := auth.jwt() -> 'user_metadata' ->> 'role';
+
+  IF v_sheet_status = 'approved' AND v_role <> 'admin' THEN
+    IF OLD.sheet_id IS DISTINCT FROM NEW.sheet_id
+      OR OLD.thrust_area_id IS DISTINCT FROM NEW.thrust_area_id
+      OR OLD.title IS DISTINCT FROM NEW.title
+      OR OLD.description IS DISTINCT FROM NEW.description
+      OR OLD.uom_type IS DISTINCT FROM NEW.uom_type
+      OR OLD.target_value IS DISTINCT FROM NEW.target_value
+      OR OLD.target_date IS DISTINCT FROM NEW.target_date
+      OR OLD.weightage IS DISTINCT FROM NEW.weightage
+      OR OLD.is_shared IS DISTINCT FROM NEW.is_shared
+      OR OLD.shared_from IS DISTINCT FROM NEW.shared_from THEN
+      RAISE EXCEPTION 'Approved goals are locked except for progress status updates';
+    END IF;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE TRIGGER prevent_locked_goal_edits
+  BEFORE UPDATE ON public.goals
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_locked_goal_edits();
+
 -- ============================================================
 -- 4. AUTO-CREATE PROFILE ON SIGNUP TRIGGER
 -- ============================================================
@@ -291,6 +326,18 @@ CREATE POLICY "Employees can view own goals"
     )
   );
 
+CREATE POLICY "Employees can view linked shared goals from own source goals"
+  ON public.goals FOR SELECT
+  USING (
+    is_shared = true
+    AND EXISTS (
+      SELECT 1 FROM public.goals source_goal
+      JOIN public.goal_sheets source_sheet ON source_sheet.id = source_goal.sheet_id
+      WHERE source_goal.id = shared_from
+      AND source_sheet.employee_id = auth.uid()
+    )
+  );
+
 CREATE POLICY "Employees can insert goals in own draft sheets"
   ON public.goals FOR INSERT
   WITH CHECK (
@@ -339,6 +386,25 @@ CREATE POLICY "Employees can delete goals in own draft sheets"
       WHERE gs.id = sheet_id
       AND gs.employee_id = auth.uid()
       AND gs.status IN ('draft', 'returned')
+    )
+  );
+
+CREATE POLICY "Employees can update own approved goal status"
+  ON public.goals FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.goal_sheets gs
+      WHERE gs.id = sheet_id
+      AND gs.employee_id = auth.uid()
+      AND gs.status = 'approved'
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.goal_sheets gs
+      WHERE gs.id = sheet_id
+      AND gs.employee_id = auth.uid()
+      AND gs.status = 'approved'
     )
   );
 
@@ -392,6 +458,20 @@ CREATE POLICY "Employees can insert own achievements"
     AND logged_by = auth.uid()
   );
 
+CREATE POLICY "Employees can sync achievements to linked shared goals"
+  ON public.achievements FOR INSERT
+  WITH CHECK (
+    logged_by = auth.uid()
+    AND EXISTS (
+      SELECT 1 FROM public.goals shared
+      JOIN public.goals source_goal ON source_goal.id = shared.shared_from
+      JOIN public.goal_sheets source_sheet ON source_sheet.id = source_goal.sheet_id
+      WHERE shared.id = goal_id
+      AND shared.is_shared = true
+      AND source_sheet.employee_id = auth.uid()
+    )
+  );
+
 CREATE POLICY "Employees can update own achievements"
   ON public.achievements FOR UPDATE
   USING (
@@ -438,9 +518,24 @@ CREATE POLICY "Managers can CRUD checkins for direct reports"
     )
   );
 
+CREATE POLICY "Managers can insert checkins for direct reports"
+  ON public.checkins FOR INSERT
+  WITH CHECK (
+    manager_id = auth.uid()
+    AND EXISTS (
+      SELECT 1 FROM public.goals g
+      JOIN public.goal_sheets gs ON gs.id = g.sheet_id
+      JOIN public.profiles emp ON emp.id = gs.employee_id
+      WHERE g.id = goal_id AND emp.manager_id = auth.uid()
+    )
+  );
+
 CREATE POLICY "Admins can do everything with checkins"
   ON public.checkins FOR ALL
   USING (
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
+  )
+  WITH CHECK (
     (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 

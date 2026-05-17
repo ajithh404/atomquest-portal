@@ -18,9 +18,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GoalCard } from '@/components/goals/GoalCard';
+import { useProfile } from '@/components/profile-provider';
 import type { Goal, GoalSheetWithGoals, Profile, ThrustArea } from '@/lib/types';
 import { calculateTotalWeightage } from '@/lib/validations';
-import { ArrowLeft, CheckCircle2, RotateCcw, Share2, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, LockOpen, RotateCcw, Share2, Save } from 'lucide-react';
 
 interface TeamSheetPageProps {
   params: {
@@ -57,6 +58,7 @@ function buildGoalEdits(goals: Goal[]): Record<string, ManagerGoalEdit> {
 }
 
 export default function TeamSheetPage({ params }: TeamSheetPageProps) {
+  const { profile } = useProfile();
   const [sheet, setSheet] = useState<GoalSheetWithGoals | null>(null);
   const [directReports, setDirectReports] = useState<Profile[]>([]);
   const [edits, setEdits] = useState<Record<string, ManagerGoalEdit>>({});
@@ -64,6 +66,8 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
   const [isActionBusy, setIsActionBusy] = useState(false);
   const [returnDialogOpen, setReturnDialogOpen] = useState(false);
   const [returnComment, setReturnComment] = useState('');
+  const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
+  const [unlockReason, setUnlockReason] = useState('');
   const [sharingGoal, setSharingGoal] = useState<Goal | null>(null);
   const [shareRecipients, setShareRecipients] = useState<string[]>([]);
   const [shareWeightage, setShareWeightage] = useState(10);
@@ -226,6 +230,39 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
     }
   }
 
+  async function unlockSheet() {
+    if (!sheet) {
+      return;
+    }
+
+    setIsActionBusy(true);
+
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'unlockSheet',
+          sheetId: sheet.id,
+          reason: unlockReason,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(await readApiError(response));
+      }
+
+      toast.success('Goal sheet unlocked and returned for edits.');
+      setUnlockDialogOpen(false);
+      setUnlockReason('');
+      await loadSheet();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to unlock sheet.');
+    } finally {
+      setIsActionBusy(false);
+    }
+  }
+
   function toggleShareRecipient(profileId: string) {
     setShareRecipients((current) =>
       current.includes(profileId) ? current.filter((id) => id !== profileId) : [...current, profileId]
@@ -259,6 +296,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
   }
 
   const canReview = sheet.status === 'submitted';
+  const canAdminUnlock = profile?.role === 'admin' && sheet.status === 'approved';
   const totalWeightage = calculateTotalWeightage(sheet.goals);
 
   return (
@@ -284,6 +322,12 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
             </CardDescription>
           </div>
           <div className="flex flex-wrap gap-2">
+            {profile?.role === 'admin' && (
+              <Button variant="outline" onClick={() => setUnlockDialogOpen(true)} disabled={!canAdminUnlock || isActionBusy}>
+                <LockOpen className="h-4 w-4" />
+                Unlock
+              </Button>
+            )}
             <Button variant="outline" onClick={() => setReturnDialogOpen(true)} disabled={!canReview || isActionBusy}>
               <RotateCcw className="h-4 w-4" />
               Return
@@ -386,6 +430,35 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
             </Button>
             <Button onClick={returnSheet} disabled={isActionBusy || returnComment.trim().length < 5}>
               Return Sheet
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={unlockDialogOpen} onOpenChange={setUnlockDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unlock Approved Sheet</DialogTitle>
+            <DialogDescription>
+              This returns the approved sheet to the employee for edits and writes an audit log entry.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2">
+            <Label htmlFor="unlock-reason">Unlock Reason</Label>
+            <textarea
+              id="unlock-reason"
+              className="min-h-28 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
+              value={unlockReason}
+              onChange={(event) => setUnlockReason(event.target.value)}
+              placeholder="Example: Correction requested by HR"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setUnlockDialogOpen(false)} disabled={isActionBusy}>
+              Cancel
+            </Button>
+            <Button onClick={unlockSheet} disabled={isActionBusy || unlockReason.trim().length < 5}>
+              Unlock Sheet
             </Button>
           </DialogFooter>
         </DialogContent>
