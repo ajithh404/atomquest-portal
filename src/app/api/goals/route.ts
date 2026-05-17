@@ -112,6 +112,34 @@ function sharedFieldsChanged(existing: Goal, incoming: z.infer<typeof goalPayloa
   );
 }
 
+async function canManageSheet(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  profile: Profile,
+  userId: string,
+  employeeId: string
+) {
+  if (profile.role === 'admin') {
+    return true;
+  }
+
+  if (profile.role !== 'manager') {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', employeeId)
+    .eq('manager_id', userId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return Boolean(data);
+}
+
 async function getSessionProfile() {
   const supabase = await createClient();
   const {
@@ -254,6 +282,12 @@ export async function GET(request: NextRequest) {
       let directReports: Profile[] = [];
 
       if (profile.role === 'manager' || profile.role === 'admin') {
+        const canView = sheet.employee_id === userId || (await canManageSheet(supabase, profile, userId, sheet.employee_id));
+
+        if (!canView) {
+          return jsonError('You can view only your own sheet or sheets for direct reports.', 403);
+        }
+
         const { data: reports } = await supabase
           .from('profiles')
           .select('*')
@@ -354,7 +388,12 @@ export async function POST(request: NextRequest) {
       return jsonError('Only managers and admins can share goals.', 403);
     }
 
-    const { goal: sourceGoal } = await fetchGoalAndSheet(supabase, parsed.data.sourceGoalId);
+    const { goal: sourceGoal, sheet: sourceSheet } = await fetchGoalAndSheet(supabase, parsed.data.sourceGoalId);
+
+    if (!(await canManageSheet(supabase, profile, userId, sourceSheet.employee_id))) {
+      return jsonError('You can share goals only from direct reports you manage.', 403);
+    }
+
     const insertedGoals: Goal[] = [];
 
     for (const recipientId of parsed.data.recipientIds) {
@@ -366,6 +405,10 @@ export async function POST(request: NextRequest) {
 
       if (!reportProfile) {
         return jsonError('Selected recipient is not available to you.', 403);
+      }
+
+      if (!(await canManageSheet(supabase, profile, userId, recipientId))) {
+        return jsonError(`${(reportProfile as Profile).name} is not your direct report.`, 403);
       }
 
       const recipientSheetResult = await supabase
@@ -500,6 +543,10 @@ export async function PATCH(request: NextRequest) {
     if (parsed.data.action === 'managerUpdateGoal') {
       if (profile.role !== 'manager' && profile.role !== 'admin') {
         return jsonError('Only managers and admins can review submitted goals.', 403);
+      }
+
+      if (!(await canManageSheet(supabase, profile, userId, sheet.employee_id))) {
+        return jsonError('You can edit only submitted goals for direct reports.', 403);
       }
 
       if (sheet.status !== 'submitted') {

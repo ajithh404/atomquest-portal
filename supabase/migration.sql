@@ -480,6 +480,17 @@ CREATE POLICY "Employees can update own achievements"
     logged_by = auth.uid()
   );
 
+CREATE POLICY "Employees can update synced linked shared achievements"
+  ON public.achievements FOR UPDATE
+  USING (
+    logged_by = auth.uid()
+    AND public.can_view_linked_shared_goal(goal_id)
+  )
+  WITH CHECK (
+    logged_by = auth.uid()
+    AND public.can_view_linked_shared_goal(goal_id)
+  );
+
 CREATE POLICY "Managers can view direct reports achievements"
   ON public.achievements FOR SELECT
   USING (

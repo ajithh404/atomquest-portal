@@ -247,12 +247,34 @@ export async function POST(request: NextRequest) {
       }));
 
       if (linkedAchievements.length > 0) {
-        const { error: syncError } = await supabase
-          .from('achievements')
-          .upsert(linkedAchievements, { onConflict: 'goal_id,quarter' });
+        for (const linkedAchievement of linkedAchievements) {
+          const { data: existingAchievement, error: existingError } = await supabase
+            .from('achievements')
+            .select('id')
+            .eq('goal_id', linkedAchievement.goal_id)
+            .eq('quarter', linkedAchievement.quarter)
+            .maybeSingle();
 
-        if (syncError) {
-          return jsonError(syncError.message);
+          if (existingError) {
+            return jsonError(existingError.message);
+          }
+
+          if (existingAchievement) {
+            const { error: syncUpdateError } = await supabase
+              .from('achievements')
+              .update(linkedAchievement)
+              .eq('id', existingAchievement.id);
+
+            if (syncUpdateError) {
+              return jsonError(syncUpdateError.message);
+            }
+          } else {
+            const { error: syncInsertError } = await supabase.from('achievements').insert(linkedAchievement);
+
+            if (syncInsertError) {
+              return jsonError(syncInsertError.message);
+            }
+          }
         }
       }
     }

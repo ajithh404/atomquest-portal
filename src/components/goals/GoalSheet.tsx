@@ -202,18 +202,27 @@ export function GoalSheet({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4">
-          {sheet.goals.map((goal) => (
-            <GoalCard
-              key={goal.id}
-              goal={goal}
-              canEdit={editable}
-              canDelete={editable}
-              onEdit={openEditDialog}
-              onDelete={handleDeleteGoal}
-            />
-          ))}
-        </div>
+        <>
+          {!editable && (
+            <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+              {sheet.status === 'approved'
+                ? 'This goal sheet is approved and locked. Ask an admin to unlock it for corrections.'
+                : 'This goal sheet has been submitted for review and cannot be edited right now.'}
+            </div>
+          )}
+          <div className="grid gap-4">
+            {sheet.goals.map((goal) => (
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                canEdit={editable}
+                canDelete={editable}
+                onEdit={openEditDialog}
+                onDelete={handleDeleteGoal}
+              />
+            ))}
+          </div>
+        </>
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
