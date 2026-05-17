@@ -226,6 +226,19 @@ CREATE POLICY "Employees can insert own goal sheets"
   ON public.goal_sheets FOR INSERT
   WITH CHECK (employee_id = auth.uid());
 
+CREATE POLICY "Managers can create direct report goal sheets for shared goals"
+  ON public.goal_sheets FOR INSERT
+  WITH CHECK (
+    (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
+    OR (
+      (auth.jwt() -> 'user_metadata' ->> 'role') = 'manager'
+      AND EXISTS (
+        SELECT 1 FROM public.profiles emp
+        WHERE emp.id = employee_id AND emp.manager_id = auth.uid()
+      )
+    )
+  );
+
 CREATE POLICY "Employees can update own draft/returned goal sheets"
   ON public.goal_sheets FOR UPDATE
   USING (
@@ -282,6 +295,24 @@ CREATE POLICY "Employees can insert goals in own draft sheets"
       WHERE gs.id = sheet_id
       AND gs.employee_id = auth.uid()
       AND gs.status IN ('draft', 'returned')
+    )
+  );
+
+CREATE POLICY "Managers can insert shared goals for direct reports"
+  ON public.goals FOR INSERT
+  WITH CHECK (
+    is_shared = true
+    AND shared_from IS NOT NULL
+    AND (
+      (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
+      OR (
+        (auth.jwt() -> 'user_metadata' ->> 'role') = 'manager'
+        AND EXISTS (
+          SELECT 1 FROM public.goal_sheets gs
+          JOIN public.profiles emp ON emp.id = gs.employee_id
+          WHERE gs.id = sheet_id AND emp.manager_id = auth.uid()
+        )
+      )
     )
   );
 

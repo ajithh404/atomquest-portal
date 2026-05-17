@@ -1,0 +1,103 @@
+'use client';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Goal } from '@/lib/types';
+import { CalendarDays, Copy, Edit3, Share2, Trash2 } from 'lucide-react';
+
+interface GoalCardProps {
+  goal: Goal;
+  canEdit?: boolean;
+  canDelete?: boolean;
+  canShare?: boolean;
+  onEdit?: (goal: Goal) => void;
+  onDelete?: (goal: Goal) => void;
+  onShare?: (goal: Goal) => void;
+}
+
+function getUomLabel(goal: Goal): string {
+  if (goal.uom_type === 'timeline') {
+    return goal.target_date ? `By ${new Date(goal.target_date).toLocaleDateString()}` : 'Timeline target';
+  }
+
+  if (goal.uom_type === 'zero') {
+    return 'Zero tolerance';
+  }
+
+  return `${goal.uom_type === 'min' ? 'At least' : 'At most'} ${goal.target_value ?? '-'}`;
+}
+
+function getStatusLabel(status: Goal['status']): string {
+  switch (status) {
+    case 'completed':
+      return 'Completed';
+    case 'on_track':
+      return 'On track';
+    default:
+      return 'Not started';
+  }
+}
+
+export function GoalCard({
+  goal,
+  canEdit = false,
+  canDelete = false,
+  canShare = false,
+  onEdit,
+  onDelete,
+  onShare,
+}: GoalCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
+        <div className="min-w-0 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary">{goal.thrust_area?.name ?? 'Thrust Area'}</Badge>
+            <Badge variant={goal.is_shared ? 'default' : 'outline'}>{goal.is_shared ? 'Shared' : 'Owned'}</Badge>
+            <Badge variant="outline">{goal.weightage}%</Badge>
+          </div>
+          <CardTitle className="text-base leading-tight">{goal.title}</CardTitle>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          {canShare && (
+            <Button type="button" size="icon" variant="ghost" onClick={() => onShare?.(goal)} aria-label="Share goal">
+              <Share2 className="h-4 w-4" />
+            </Button>
+          )}
+          {canEdit && (
+            <Button type="button" size="icon" variant="ghost" onClick={() => onEdit?.(goal)} aria-label="Edit goal">
+              <Edit3 className="h-4 w-4" />
+            </Button>
+          )}
+          {canDelete && (
+            <Button type="button" size="icon" variant="ghost" onClick={() => onDelete?.(goal)} aria-label="Delete goal">
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {goal.description && <p className="text-sm text-muted-foreground">{goal.description}</p>}
+        <div className="grid gap-2 text-sm sm:grid-cols-3">
+          <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            <span>{getUomLabel(goal)}</span>
+          </div>
+          <div className="rounded-md bg-muted/50 px-3 py-2">
+            <span className="text-muted-foreground">UoM:</span> {goal.uom_type}
+          </div>
+          <div className="rounded-md bg-muted/50 px-3 py-2">
+            <span className="text-muted-foreground">Status:</span> {getStatusLabel(goal.status)}
+          </div>
+        </div>
+        {goal.shared_from && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Copy className="h-3.5 w-3.5" />
+            Linked to source goal
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

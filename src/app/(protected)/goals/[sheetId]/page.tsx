@@ -1,18 +1,23 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { toast } from 'sonner';
-import { useProfile } from '@/components/profile-provider';
 import { GoalSheet } from '@/components/goals/GoalSheet';
 import type { GoalFormValues } from '@/components/goals/GoalForm';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Goal, GoalSheetWithGoals, ThrustArea } from '@/lib/types';
-import { ClipboardList, Plus } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+
+interface GoalSheetDetailPageProps {
+  params: {
+    sheetId: string;
+  };
+}
 
 interface GoalsResponse {
-  sheet: GoalSheetWithGoals | null;
+  sheet: GoalSheetWithGoals;
   thrustAreas: ThrustArea[];
 }
 
@@ -21,18 +26,16 @@ async function readApiError(response: Response): Promise<string> {
   return body?.error ?? 'Request failed.';
 }
 
-export default function GoalsPage() {
-  const { profile, isLoading: isProfileLoading } = useProfile();
+export default function GoalSheetDetailPage({ params }: GoalSheetDetailPageProps) {
   const [sheet, setSheet] = useState<GoalSheetWithGoals | null>(null);
   const [thrustAreas, setThrustAreas] = useState<ThrustArea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isBusy, setIsBusy] = useState(false);
 
-  const loadGoals = useCallback(async () => {
+  const loadSheet = useCallback(async () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/goals');
+      const response = await fetch(`/api/goals?sheetId=${params.sheetId}`);
 
       if (!response.ok) {
         throw new Error(await readApiError(response));
@@ -42,44 +45,19 @@ export default function GoalsPage() {
       setSheet(data.sheet);
       setThrustAreas(data.thrustAreas);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Unable to load goals.');
+      toast.error(error instanceof Error ? error.message : 'Unable to load goal sheet.');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [params.sheetId]);
 
   useEffect(() => {
-    if (!isProfileLoading) {
-      void loadGoals();
-    }
-  }, [isProfileLoading, loadGoals]);
-
-  async function createSheet() {
-    setIsBusy(true);
-
-    try {
-      const response = await fetch('/api/goals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'createSheet' }),
-      });
-
-      if (!response.ok) {
-        throw new Error(await readApiError(response));
-      }
-
-      toast.success('Goal sheet created.');
-      await loadGoals();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Unable to create goal sheet.');
-    } finally {
-      setIsBusy(false);
-    }
-  }
+    void loadSheet();
+  }, [loadSheet]);
 
   async function createGoal(values: GoalFormValues) {
     if (!sheet) {
-      throw new Error('Create a goal sheet before adding goals.');
+      throw new Error('Goal sheet was not loaded.');
     }
 
     const response = await fetch('/api/goals', {
@@ -93,7 +71,7 @@ export default function GoalsPage() {
     }
 
     toast.success('Goal added.');
-    await loadGoals();
+    await loadSheet();
   }
 
   async function updateGoal(goal: Goal, values: GoalFormValues) {
@@ -108,7 +86,7 @@ export default function GoalsPage() {
     }
 
     toast.success('Goal updated.');
-    await loadGoals();
+    await loadSheet();
   }
 
   async function deleteGoal(goal: Goal) {
@@ -122,7 +100,7 @@ export default function GoalsPage() {
     }
 
     toast.success('Goal deleted.');
-    await loadGoals();
+    await loadSheet();
   }
 
   async function submitSheet() {
@@ -141,15 +119,14 @@ export default function GoalsPage() {
       return;
     }
 
-    toast.success(sheet.status === 'returned' ? 'Goal sheet resubmitted.' : 'Goal sheet submitted.');
-    await loadGoals();
+    toast.success('Goal sheet submitted.');
+    await loadSheet();
   }
 
-  if (isProfileLoading || isLoading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-72" />
+        <Skeleton className="h-9 w-32" />
         <Skeleton className="h-36" />
         <Skeleton className="h-48" />
       </div>
@@ -158,43 +135,22 @@ export default function GoalsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Goals</h1>
-          <p className="text-muted-foreground">
-            Welcome back, {profile?.name?.split(' ')[0] ?? 'there'}. Build and submit your FY 2025-26 goal sheet.
-          </p>
-        </div>
-      </div>
+      <Button asChild variant="ghost" className="px-0">
+        <Link href="/goals">
+          <ArrowLeft className="h-4 w-4" />
+          Back to My Goals
+        </Link>
+      </Button>
 
-      {sheet ? (
+      {sheet && (
         <GoalSheet
           sheet={sheet}
           thrustAreas={thrustAreas}
-          isBusy={isBusy}
           onCreateGoal={createGoal}
           onUpdateGoal={updateGoal}
           onDeleteGoal={deleteGoal}
           onSubmitSheet={submitSheet}
         />
-      ) : (
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle>No Goal Sheet Yet</CardTitle>
-            <CardDescription>
-              Create a sheet for FY 2025-26, then add up to 8 goals with a total weightage of exactly 100%.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <ClipboardList className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <Button onClick={createSheet} disabled={isBusy}>
-              <Plus className="h-4 w-4" />
-              {isBusy ? 'Creating...' : 'Create Goal Sheet'}
-            </Button>
-          </CardContent>
-        </Card>
       )}
     </div>
   );
