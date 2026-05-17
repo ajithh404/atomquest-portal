@@ -177,6 +177,21 @@ CREATE OR REPLACE TRIGGER prevent_locked_goal_edits
   BEFORE UPDATE ON public.goals
   FOR EACH ROW EXECUTE FUNCTION public.prevent_locked_goal_edits();
 
+CREATE OR REPLACE FUNCTION public.can_view_linked_shared_goal(p_goal_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1
+    FROM public.goals shared
+    JOIN public.goals source_goal ON source_goal.id = shared.shared_from
+    JOIN public.goal_sheets source_sheet ON source_sheet.id = source_goal.sheet_id
+    WHERE shared.id = p_goal_id
+      AND shared.is_shared = true
+      AND source_sheet.employee_id = auth.uid()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- ============================================================
 -- 4. AUTO-CREATE PROFILE ON SIGNUP TRIGGER
 -- ============================================================
@@ -329,13 +344,7 @@ CREATE POLICY "Employees can view own goals"
 CREATE POLICY "Employees can view linked shared goals from own source goals"
   ON public.goals FOR SELECT
   USING (
-    is_shared = true
-    AND EXISTS (
-      SELECT 1 FROM public.goals source_goal
-      JOIN public.goal_sheets source_sheet ON source_sheet.id = source_goal.sheet_id
-      WHERE source_goal.id = shared_from
-      AND source_sheet.employee_id = auth.uid()
-    )
+    public.can_view_linked_shared_goal(id)
   );
 
 CREATE POLICY "Employees can insert goals in own draft sheets"
@@ -462,14 +471,7 @@ CREATE POLICY "Employees can sync achievements to linked shared goals"
   ON public.achievements FOR INSERT
   WITH CHECK (
     logged_by = auth.uid()
-    AND EXISTS (
-      SELECT 1 FROM public.goals shared
-      JOIN public.goals source_goal ON source_goal.id = shared.shared_from
-      JOIN public.goal_sheets source_sheet ON source_sheet.id = source_goal.sheet_id
-      WHERE shared.id = goal_id
-      AND shared.is_shared = true
-      AND source_sheet.employee_id = auth.uid()
-    )
+    AND public.can_view_linked_shared_goal(goal_id)
   );
 
 CREATE POLICY "Employees can update own achievements"
