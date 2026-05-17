@@ -244,6 +244,10 @@ CREATE POLICY "Employees can update own draft/returned goal sheets"
   USING (
     employee_id = auth.uid()
     AND status IN ('draft', 'returned')
+  )
+  WITH CHECK (
+    employee_id = auth.uid()
+    AND status IN ('draft', 'returned', 'submitted')
   );
 
 CREATE POLICY "Managers can view direct reports goal sheets"
