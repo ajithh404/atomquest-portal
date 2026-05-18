@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Loader2, AlertCircle, Eye, EyeOff, Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -181,7 +181,8 @@ export default function LoginPage() {
       </Card>
 
       {/* Footer */}
-      <p className="mt-6 text-center text-sm text-white/44">
+      <p className="mt-6 flex items-center justify-center gap-2 text-center text-sm text-white/44">
+        <Lock className="h-4 w-4" />
         Your data is encrypted and secure
       </p>
     </>

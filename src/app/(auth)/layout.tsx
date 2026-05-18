@@ -33,7 +33,7 @@ export default function AuthLayout({
               AtomQuest helps teams set goals, track progress, and achieve more — together.
             </p>
 
-            <div className="auth-dashboard-preview mt-8">
+            <div className="auth-dashboard-preview mt-6">
               <div className="auth-preview-sidebar">
                 <div className="mb-5 flex items-center gap-2 text-xs font-bold text-white">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-300">AQ</div>
@@ -46,25 +46,25 @@ export default function AuthLayout({
                   </div>
                 ))}
               </div>
-              <div className="flex-1 p-5">
-                <div className="mb-5 text-sm font-bold text-white">Dashboard</div>
-                <div className="grid grid-cols-3 gap-3">
+              <div className="flex-1 p-4">
+                <div className="mb-4 text-xs font-bold text-white">Dashboard</div>
+                <div className="grid grid-cols-3 gap-2.5">
                   {[
                     ['Total Goals', '128', '+12.5%'],
                     ['Completed', '96', '+8.3%'],
                     ['In Progress', '24', '-4.2%'],
                   ].map(([label, value, trend]) => (
-                    <div key={label} className="rounded-xl border border-white/10 bg-white/[0.045] p-4 shadow-[0_12px_28px_rgba(2,6,23,0.16)]">
+                    <div key={label} className="rounded-xl border border-white/10 bg-white/[0.045] p-3 shadow-[0_12px_28px_rgba(2,6,23,0.16)]">
                       <div className="text-[11px] font-medium text-white/50">{label}</div>
-                      <div className="mt-2 text-2xl font-bold text-white">{value}</div>
+                      <div className="mt-1.5 text-xl font-bold text-white">{value}</div>
                       <div className={trend.startsWith('+') ? 'mt-1 text-[11px] font-bold text-emerald-400' : 'mt-1 text-[11px] font-bold text-red-400'}>
                         {trend}
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] p-5">
-                  <div className="mb-4 flex items-center justify-between">
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-4">
+                  <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm font-bold text-white">Goal Progress</span>
                     <span className="text-[11px] text-white/45">Last 7 days</span>
                   </div>
@@ -80,7 +80,7 @@ export default function AuthLayout({
             </div>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-6">
             <div className="grid grid-cols-3 gap-5">
               {[
                 {

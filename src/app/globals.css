@@ -811,8 +811,8 @@
   .auth-dashboard-preview {
     position: relative;
     display: flex;
-    min-height: 270px;
-    max-width: 600px;
+    min-height: 216px;
+    max-width: 480px;
     overflow: hidden;
     border: 1px solid rgba(16, 185, 129, 0.28);
     border-radius: 24px;
@@ -823,7 +823,7 @@
       0 0 0 1px rgba(255, 255, 255, 0.055) inset,
       0 0 44px rgba(16, 185, 129, 0.24),
       0 28px 70px rgba(2, 6, 23, 0.44);
-    transform: perspective(1000px) rotateX(3deg) rotateY(-5deg) rotateZ(0.5deg);
+    transform: perspective(1000px) rotateX(3deg) rotateY(5deg) rotateZ(-0.5deg);
     transform-origin: left center;
     backdrop-filter: blur(18px);
   }
@@ -839,9 +839,9 @@
   .auth-preview-sidebar {
     position: relative;
     z-index: 1;
-    width: 140px;
+    width: 112px;
     flex-shrink: 0;
-    padding: 18px 14px;
+    padding: 14px 11px;
     border-right: 1px solid rgba(255, 255, 255, 0.07);
     background: rgba(2, 6, 23, 0.58);
   }
@@ -849,12 +849,12 @@
   .auth-preview-nav {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
+    gap: 8px;
+    margin-bottom: 5px;
     border-radius: 10px;
-    padding: 8px 10px;
+    padding: 7px 8px;
     color: rgba(255, 255, 255, 0.62);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
   }
 
@@ -866,13 +866,13 @@
 
   .auth-chart {
     position: relative;
-    height: 92px;
+    height: 74px;
     overflow: hidden;
     border-radius: 16px;
     background:
       linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 100% 23px, 64px 100%;
+    background-size: 100% 19px, 52px 100%;
   }
 
   .auth-chart::before {
@@ -880,7 +880,7 @@
     position: absolute;
     left: 16px;
     right: 16px;
-    top: 42px;
+    top: 34px;
     height: 3px;
     border-radius: 999px;
     background: linear-gradient(90deg, #10b981, #059669, #34d399);
@@ -890,8 +890,8 @@
 
   .auth-chart span {
     position: absolute;
-    width: 9px;
-    height: 9px;
+    width: 7px;
+    height: 7px;
     border-radius: 999px;
     background: #10b981;
     box-shadow: 0 0 14px rgba(16, 185, 129, 0.72);
