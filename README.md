@@ -1,144 +1,180 @@
 # AtomQuest — Goal Setting & Tracking Portal
 
-An in-house goal setting, tracking, and governance portal built for Atomberg Technologies' AtomQuest Hackathon 1.0.
+AtomQuest is an in-house goal setting, approval, achievement tracking, and governance portal built for Atomberg Technologies' AtomQuest Hackathon 1.0.
 
-## 🚀 Tech Stack
+## Live Submission
+
+- Live Vercel URL: https://atomquest-portal.vercel.app
+- GitHub repository: https://github.com/ajithh404/atomquest-portal
+- Monthly operating cost: $0 using free-tier Vercel, Supabase, and Resend limits.
+
+## Demo Credentials
+
+| Role | Name | Email | Password |
+| --- | --- | --- | --- |
+| Employee | Rahul Sharma | employee@demo.com | Demo@1234 |
+| Manager | Priya Nair | manager@demo.com | Demo@1234 |
+| Admin / HR | Admin User | admin@demo.com | Demo@1234 |
+
+## Demo Data Included
+
+The Supabase migration seeds a complete FY2025-26 journey:
+
+- Rahul Sharma reports to Priya Nair.
+- Rahul has an approved FY2025-26 goal sheet with goals totaling exactly 100%.
+- Rahul's Q1 achievements include sales revenue of 42 against a target of 50, and complaint TAT of 28 hours against a target of 24 hours.
+- Priya has pushed a shared safety goal, `Maintain zero safety incidents`, to Rahul's sheet with `is_shared = true` and `shared_from` linked.
+- Admin User has an audit log entry for unlocking Goal 2 with reason `Correction requested by HR`.
+
+## Role Descriptions
+
+| Role | What they can do |
+| --- | --- |
+| Employee | Create goal sheets, add up to 8 goals, balance weightage to 100%, submit for approval, revise returned sheets, log quarterly achievements, and view progress. |
+| Manager | Review submitted sheets from direct reports, edit targets before approval, approve or return sheets, push shared goals, and add quarterly check-in comments. |
+| Admin / HR | Manage organization structure, configure thrust areas, open or close quarterly windows, unlock approved sheets with audit logging, view reports, and export data. |
+
+## Core Features
+
+- Role-based protected portal for employee, manager, and admin workflows.
+- Goal creation, editing, submission, approval, return, and lock behavior.
+- Shared goals with recipient-only weightage editing.
+- Quarterly achievement windows controlled by admin.
+- Progress score calculations for min, max, zero, and timeline UoM types.
+- Manager check-ins and comment history per goal.
+- Admin reports, completion dashboard, XLSX export, and searchable audit logs.
+- Responsive sidebar, notification bell, and polished AtomQuest login experience.
+
+## Bonus Features
+
+- Realtime notification bell for submitted, approved, returned, check-in, and window-open activity.
+- Resend email notifications for approvals, returns, and opened quarterly windows.
+- Recharts analytics for progress trends and department completion rates.
+- SheetJS Excel export with populated achievement data.
+- Admin audit trail for governance actions.
+- Dark/light dashboard theme with persisted preference.
+
+## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| **Framework** | Next.js 14 (App Router, TypeScript) |
-| **Database + Auth** | Supabase (PostgreSQL + Supabase Auth) |
-| **UI** | shadcn/ui + Tailwind CSS |
-| **Hosting** | Vercel |
-| **Charts** | Recharts |
-| **Export** | SheetJS (xlsx) |
-| **Notifications** | Resend |
+| --- | --- |
+| Framework | Next.js 14.2.35, App Router, TypeScript |
+| Styling | Tailwind CSS v3, shadcn/ui new-york style, lucide-react |
+| Forms | react-hook-form, zod, @hookform/resolvers |
+| Auth + Database | Supabase Auth, PostgreSQL, Row Level Security |
+| Realtime | Supabase realtime subscriptions |
+| Charts | Recharts |
+| Export | SheetJS / xlsx |
+| Email | Resend |
+| Hosting | Vercel connected to GitHub auto-deploy |
 
-## 🏗️ Architecture
+## Architecture
 
-```
-┌──────────────────┐     ┌──────────────────────────────┐
-│   Next.js App    │────▶│    Supabase                  │
-│   (Vercel)       │     │  ┌─────────────────────────┐ │
-│                  │     │  │ PostgreSQL (data)        │ │
-│  - App Router    │     │  │ Auth (email + password)  │ │
-│  - API Routes    │     │  │ Row Level Security       │ │
-│  - shadcn/ui     │     │  └─────────────────────────┘ │
-└──────────────────┘     └──────────────────────────────┘
-         │
-         ▼
-  ┌──────────────┐
-  │   Resend     │
-  │   (Email)    │
-  └──────────────┘
-```
+```mermaid
+flowchart LR
+  User["Employee / Manager / Admin"] --> Vercel["Next.js App on Vercel"]
 
-**Monthly cost: $0** (all services on free tiers)
+  subgraph Next["Next.js 14 App Router"]
+    UI["Protected UI + shadcn components"]
+    API["Server API routes"]
+    AuthUI["Login + Profile Provider"]
+  end
 
-## 👥 User Roles
+  Vercel --> Next
+  UI --> API
+  AuthUI --> SupabaseAuth["Supabase Auth"]
+  API --> SupabaseDB["Supabase PostgreSQL"]
+  API --> Resend["Resend Email"]
+  UI --> Realtime["Supabase Realtime"]
 
-| Role | Capabilities |
-|------|-------------|
-| **Employee** | Create goal sheets, submit for approval, log quarterly achievements, view progress |
-| **Manager** | Review & approve goal sheets, edit targets, add check-in comments, push shared goals |
-| **Admin / HR** | Full org visibility, manage thrust areas, open/close quarterly windows, unlock goals, audit trail, export reports |
-
-## 🔧 Local Setup
-
-### Prerequisites
-- Node.js 18+
-- npm
-- A Supabase project
-
-### Steps
-
-1. **Clone the repo:**
-   ```bash
-   git clone https://github.com/ajithh404/atomquest-portal.git
-   cd atomquest-portal
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment:**
-   ```bash
-   cp .env.local.example .env.local
-   # Edit .env.local with your Supabase URL and anon key
-   ```
-
-4. **Run database migration:**
-   - Open your Supabase SQL Editor
-   - Paste the contents of `supabase/migration.sql`
-   - Click "Run"
-
-5. **Start dev server:**
-   ```bash
-   npm run dev
-   ```
-
-6. **Open:** [http://localhost:3000](http://localhost:3000)
-
-## 🔑 Demo Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| Employee | employee@demo.com | Demo@1234 |
-| Manager | manager@demo.com | Demo@1234 |
-| Admin | admin@demo.com | Demo@1234 |
-
-## 📁 Project Structure
-
-```
-/src
-  /app
-    /(auth)/login         → Login page
-    /(protected)
-      /goals              → Employee goal management
-      /goals/progress     → Achievement tracking
-      /team               → Manager team view
-      /team/checkins      → Manager check-ins
-      /dashboard          → Admin dashboard
-      /dashboard/org      → Org hierarchy
-      /dashboard/thrust-areas → Thrust area config
-      /dashboard/cycles   → Quarterly window management
-      /dashboard/reports  → Export reports
-      /dashboard/audit    → Audit trail
-      /profile            → User profile
-  /components
-    /ui                   → shadcn/ui components
-    app-sidebar.tsx       → Role-based sidebar navigation
-    profile-provider.tsx  → Auth context provider
-  /lib
-    /supabase             → Supabase client configurations
-    auth.ts               → Role helpers
-    types.ts              → TypeScript type definitions
-/supabase
-  migration.sql           → Full database schema + seed data
+  SupabaseDB --> RLS["Row Level Security Policies"]
+  SupabaseDB --> Tables["profiles, goal_sheets, goals, achievements, checkins, audit_logs, quarterly_windows"]
 ```
 
-## 📋 Validation Rules
+## Validation And Governance Rules
 
-- Total weightage across all goals in one sheet = exactly **100%**
-- Minimum weightage per goal: **10%**
-- Maximum goals per sheet: **8**
-- Shared goals: recipients can only edit weightage
-- Goals locked after manager approval (admin can unlock with audit trail)
-- Quarterly achievement entry restricted to open windows
+- Total weightage across all goals in one sheet must equal exactly 100%.
+- Minimum weightage per goal is 10%.
+- Maximum goals per sheet is 8.
+- Shared goal recipients can edit only weightage.
+- Approved sheets are locked unless an admin unlocks them.
+- Achievement entry is allowed only when the selected quarterly window is open.
+- Admin unlock actions are written to `audit_logs`.
 
-## 📊 Progress Score Formulas
+## Progress Score Formulas
 
-| UoM Type | Formula | Example |
-|----------|---------|---------|
-| **Min** (higher is better) | `actual ÷ target` | Sales: 42/50 = 84% |
-| **Max** (lower is better) | `target ÷ actual` | TAT: 24/28 = 85.7% |
-| **Timeline** (date-based) | `1` if on time, else prorated | Deadline compliance |
-| **Zero** (zero = success) | `1` if actual == 0, else `0` | Zero defects |
+| UoM Type | Formula | Demo Example |
+| --- | --- | --- |
+| Min, higher is better | `Math.min(actual / target, 1)` | Sales: 42 / 50 = 84% |
+| Max, lower is better | `Math.min(target / actual, 1)` | TAT: 24 / 28 = 85.7% |
+| Zero, zero is success | `actual === 0 ? 1 : 0` | Safety incidents |
+| Timeline | `1` when on or before target date, otherwise prorated by lateness | Certification deadline |
 
-All scores capped at **100%**.
+All scores are capped at 100% and are tracking scores, not ratings.
 
-## 📄 License
+## Local Setup
 
-Private — Built for AtomQuest Hackathon 1.0
+1. Clone the repository.
+
+```bash
+git clone https://github.com/ajithh404/atomquest-portal.git
+cd atomquest-portal
+```
+
+2. Install dependencies.
+
+```bash
+npm install
+```
+
+3. Configure environment variables.
+
+```bash
+cp .env.local.example .env.local
+```
+
+Required variables:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+RESEND_API_KEY=
+```
+
+4. Run `supabase/migration.sql` in the Supabase SQL editor.
+
+5. Start the app.
+
+```bash
+npm run dev
+```
+
+6. Open http://localhost:3000.
+
+## Project Structure
+
+```text
+src/app/(auth)/login              Login page
+src/app/(protected)/goals         Employee goal sheets
+src/app/(protected)/goals/progress Achievement tracking
+src/app/(protected)/team          Manager review workflows
+src/app/(protected)/team/checkins Manager check-ins
+src/app/(protected)/dashboard     Admin dashboard
+src/app/api                       Server routes for goals, approvals, admin, reports
+src/components                    Shared UI, sidebar, goal, check-in, report components
+src/lib                           Supabase clients, types, scoring, validations
+supabase/migration.sql            Schema, RLS policies, demo users, and seed data
+```
+
+## Final Submission Checklist
+
+- Live Vercel URL works in incognito.
+- All three demo logins work.
+- Employee can view Rahul's approved sheet and log progress for open windows.
+- Manager can review direct reports and see realtime notifications.
+- Admin can manage windows, organization, reports, and audit logs.
+- Excel export downloads real populated data.
+
+## License
+
+Private project built for AtomQuest Hackathon 1.0.

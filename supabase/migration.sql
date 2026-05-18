@@ -599,7 +599,58 @@ DECLARE
   v_employee_id UUID := '11111111-1111-1111-1111-111111111111';
   v_manager_id UUID := '22222222-2222-2222-2222-222222222222';
   v_admin_id UUID := '33333333-3333-3333-3333-333333333333';
+  v_rahul_sheet_id UUID := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1';
+  v_priya_sheet_id UUID := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2';
+  v_sales_goal_id UUID := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1';
+  v_tat_goal_id UUID := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2';
+  v_cert_goal_id UUID := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3';
+  v_source_safety_goal_id UUID := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb4';
+  v_shared_safety_goal_id UUID := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb5';
+  v_sales_achievement_id UUID := 'cccccccc-cccc-cccc-cccc-ccccccccccc1';
+  v_tat_achievement_id UUID := 'cccccccc-cccc-cccc-cccc-ccccccccccc2';
+  v_audit_log_id UUID := 'dddddddd-dddd-dddd-dddd-ddddddddddd1';
+  v_sales_area_id UUID;
+  v_process_area_id UUID;
+  v_safety_area_id UUID;
 BEGIN
+  -- Delete existing demo rows if they exist (idempotent)
+  DELETE FROM public.audit_logs
+  WHERE id = v_audit_log_id
+     OR changed_by IN (v_employee_id, v_manager_id, v_admin_id)
+     OR record_id IN (
+       v_rahul_sheet_id,
+       v_priya_sheet_id,
+       v_sales_goal_id,
+       v_tat_goal_id,
+       v_cert_goal_id,
+       v_source_safety_goal_id,
+       v_shared_safety_goal_id
+     );
+
+  DELETE FROM public.checkins
+  WHERE manager_id IN (v_employee_id, v_manager_id, v_admin_id)
+     OR goal_id IN (
+       v_sales_goal_id,
+       v_tat_goal_id,
+       v_cert_goal_id,
+       v_source_safety_goal_id,
+       v_shared_safety_goal_id
+     );
+
+  DELETE FROM public.achievements
+  WHERE logged_by IN (v_employee_id, v_manager_id, v_admin_id)
+     OR goal_id IN (
+       v_sales_goal_id,
+       v_tat_goal_id,
+       v_cert_goal_id,
+       v_source_safety_goal_id,
+       v_shared_safety_goal_id
+     );
+
+  DELETE FROM public.goal_sheets
+  WHERE id IN (v_rahul_sheet_id, v_priya_sheet_id)
+     OR (employee_id IN (v_employee_id, v_manager_id) AND cycle_year = 2025);
+
   -- Delete existing demo users if they exist (idempotent)
   DELETE FROM auth.users WHERE email IN ('employee@demo.com', 'manager@demo.com', 'admin@demo.com');
 
@@ -702,13 +753,229 @@ BEGIN
     department = EXCLUDED.department;
 
   -- ============================================================
-  -- 9. SEED QUARTERLY WINDOWS (FY 2025-26)
+  -- 9. SEED REALISTIC DEMO GOAL DATA (FY 2025-26)
+  -- ============================================================
+  SELECT id INTO v_sales_area_id
+  FROM public.thrust_areas
+  WHERE name = 'Sales Performance';
+
+  SELECT id INTO v_process_area_id
+  FROM public.thrust_areas
+  WHERE name = 'Process Efficiency';
+
+  SELECT id INTO v_safety_area_id
+  FROM public.thrust_areas
+  WHERE name = 'Safety & Compliance';
+
+  -- Manager source sheet for the safety goal that is pushed to Rahul.
+  INSERT INTO public.goal_sheets (
+    id,
+    employee_id,
+    cycle_year,
+    status,
+    submitted_at,
+    approved_at,
+    approved_by
+  ) VALUES (
+    v_priya_sheet_id,
+    v_manager_id,
+    2025,
+    'approved',
+    NOW() - INTERVAL '22 days',
+    NOW() - INTERVAL '20 days',
+    v_admin_id
+  );
+
+  INSERT INTO public.goals (
+    id,
+    sheet_id,
+    thrust_area_id,
+    title,
+    description,
+    uom_type,
+    target_value,
+    target_date,
+    weightage,
+    status,
+    is_shared,
+    shared_from
+  ) VALUES (
+    v_source_safety_goal_id,
+    v_priya_sheet_id,
+    v_safety_area_id,
+    'Maintain zero safety incidents',
+    'Team-wide shared safety goal pushed by Priya Nair.',
+    'zero',
+    NULL,
+    NULL,
+    100,
+    'on_track',
+    false,
+    NULL
+  );
+
+  -- Rahul's approved sheet totals exactly 100% after shared safety goal adjustment.
+  INSERT INTO public.goal_sheets (
+    id,
+    employee_id,
+    cycle_year,
+    status,
+    submitted_at,
+    approved_at,
+    approved_by
+  ) VALUES (
+    v_rahul_sheet_id,
+    v_employee_id,
+    2025,
+    'approved',
+    NOW() - INTERVAL '18 days',
+    NOW() - INTERVAL '16 days',
+    v_manager_id
+  );
+
+  INSERT INTO public.goals (
+    id,
+    sheet_id,
+    thrust_area_id,
+    title,
+    description,
+    uom_type,
+    target_value,
+    target_date,
+    weightage,
+    status,
+    is_shared,
+    shared_from
+  ) VALUES
+    (
+      v_sales_goal_id,
+      v_rahul_sheet_id,
+      v_sales_area_id,
+      'Achieve monthly sales revenue of ₹50L',
+      'Grow monthly revenue through dealer expansion and conversion improvements.',
+      'min',
+      50,
+      NULL,
+      30,
+      'on_track',
+      false,
+      NULL
+    ),
+    (
+      v_tat_goal_id,
+      v_rahul_sheet_id,
+      v_process_area_id,
+      'Reduce customer complaint TAT to 24hrs',
+      'Improve complaint resolution workflows and reduce turnaround time.',
+      'max',
+      24,
+      NULL,
+      30,
+      'on_track',
+      false,
+      NULL
+    ),
+    (
+      v_cert_goal_id,
+      v_rahul_sheet_id,
+      v_safety_area_id,
+      'Complete product certification by Dec 31',
+      'Complete required product certification milestones before the deadline.',
+      'timeline',
+      NULL,
+      '2025-12-31',
+      30,
+      'not_started',
+      false,
+      NULL
+    ),
+    (
+      v_shared_safety_goal_id,
+      v_rahul_sheet_id,
+      v_safety_area_id,
+      'Maintain zero safety incidents',
+      'Shared team safety goal pushed by Priya Nair.',
+      'zero',
+      NULL,
+      NULL,
+      10,
+      'on_track',
+      true,
+      v_source_safety_goal_id
+    );
+
+  INSERT INTO public.achievements (
+    id,
+    goal_id,
+    quarter,
+    actual_value,
+    actual_date,
+    progress_score,
+    notes,
+    logged_by,
+    logged_at
+  ) VALUES
+    (
+      v_sales_achievement_id,
+      v_sales_goal_id,
+      'Q1',
+      42,
+      '2025-09-30',
+      0.84,
+      'Revenue reached ₹42L against a ₹50L monthly target.',
+      v_employee_id,
+      NOW() - INTERVAL '8 days'
+    ),
+    (
+      v_tat_achievement_id,
+      v_tat_goal_id,
+      'Q1',
+      28,
+      '2025-09-30',
+      0.8571428571,
+      'Complaint TAT improved to 28 hours against a 24 hour target.',
+      v_employee_id,
+      NOW() - INTERVAL '8 days'
+    );
+
+  INSERT INTO public.audit_logs (
+    id,
+    table_name,
+    record_id,
+    action,
+    old_value,
+    new_value,
+    changed_by,
+    changed_at
+  ) VALUES (
+    v_audit_log_id,
+    'goals',
+    v_tat_goal_id,
+    'admin_unlock',
+    jsonb_build_object('status', 'approved', 'title', 'Reduce customer complaint TAT to 24hrs'),
+    jsonb_build_object(
+      'status',
+      'returned',
+      'reason',
+      'Correction requested by HR',
+      'title',
+      'Reduce customer complaint TAT to 24hrs'
+    ),
+    v_admin_id,
+    NOW() - INTERVAL '3 days'
+  );
+
+  -- ============================================================
+  -- 10. SEED QUARTERLY WINDOWS (FY 2025-26)
   -- ============================================================
   INSERT INTO public.quarterly_windows (cycle_year, quarter, start_date, end_date, is_open) VALUES
     (2025, 'Q1', '2025-07-01', '2025-09-30', true),
     (2025, 'Q2', '2025-10-01', '2025-12-31', false),
     (2025, 'Q3', '2026-01-01', '2026-03-31', false),
     (2025, 'Q4', '2026-04-01', '2026-06-30', false)
-  ON CONFLICT (cycle_year, quarter) DO NOTHING;
+  ON CONFLICT (cycle_year, quarter) DO UPDATE SET
+    start_date = EXCLUDED.start_date,
+    end_date = EXCLUDED.end_date,
+    is_open = EXCLUDED.is_open;
 
 END $$;
