@@ -66,6 +66,7 @@ interface NotificationItem {
   title: string;
   description: string;
   createdAt: string;
+  isUnread?: boolean;
 }
 
 interface ActivityGoalSheetRow {
@@ -227,6 +228,18 @@ function mergeNotification(items: NotificationItem[], item: NotificationItem) {
   return sortNotifications([item, ...items.filter((existing) => existing.id !== item.id)]);
 }
 
+function getNotificationReadKey(userId: string) {
+  return `atomquest-notifications-read-at-${userId}`;
+}
+
+function isUnreadNotification(item: NotificationItem, lastReadAt: string | null) {
+  if (!lastReadAt) {
+    return true;
+  }
+
+  return new Date(item.createdAt).getTime() > new Date(lastReadAt).getTime();
+}
+
 function buildGoalSheetNotification(row: ActivityGoalSheetRow, fallbackName = 'Employee'): NotificationItem | null {
   const employeeName = row.employee?.name ?? fallbackName;
   const baseDescription = `${employeeName} · FY2025-26`;
@@ -279,7 +292,7 @@ export function AppSidebar() {
   }, []);
 
   const addLiveNotification = useCallback((item: NotificationItem) => {
-    setNotifications((current) => mergeNotification(current, item));
+    setNotifications((current) => mergeNotification(current, { ...item, isUnread: true }));
     setUnreadCount((current) => current + 1);
   }, []);
 
@@ -368,7 +381,14 @@ export function AppSidebar() {
       }
 
       if (isMounted) {
-        setNotifications(sortNotifications(initialItems));
+        const lastReadAt = window.localStorage.getItem(getNotificationReadKey(activeProfile.id));
+        const sortedItems = sortNotifications(initialItems).map((item) => ({
+          ...item,
+          isUnread: isUnreadNotification(item, lastReadAt),
+        }));
+
+        setNotifications(sortedItems);
+        setUnreadCount(sortedItems.filter((item) => item.isUnread).length);
       }
 
       const reportIdSet = new Set(reportIds);
@@ -485,6 +505,20 @@ export function AppSidebar() {
     setIsDarkMode(nextMode);
   }
 
+  function handleNotificationOpenChange(open: boolean) {
+    if (!profile) {
+      return;
+    }
+
+    if (open) {
+      window.localStorage.setItem(getNotificationReadKey(profile.id), new Date().toISOString());
+      setUnreadCount(0);
+      return;
+    }
+
+    setNotifications((current) => current.map((item) => ({ ...item, isUnread: false })));
+  }
+
   return (
     <Sidebar variant="inset" className="w-[260px] min-w-[260px] p-0">
       <SidebarHeader className="border-b border-white/10">
@@ -530,7 +564,7 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <div className="mb-2 flex items-center gap-2 px-1">
-          <DropdownMenu onOpenChange={(open) => open && setUnreadCount(0)}>
+          <DropdownMenu onOpenChange={handleNotificationOpenChange}>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
@@ -558,7 +592,19 @@ export function AppSidebar() {
               ) : (
                 notifications.map((item) => (
                   <DropdownMenuItem key={item.id} className="flex cursor-default flex-col items-start gap-1 py-3">
-                    <span className="text-sm font-semibold">{item.title}</span>
+                    <span className="flex w-full items-center justify-between gap-3 text-sm font-semibold">
+                      <span className="flex min-w-0 items-center gap-2">
+                        {item.isUnread && (
+                          <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.75)]" />
+                        )}
+                        <span className="truncate">{item.title}</span>
+                      </span>
+                      {item.isUnread && (
+                        <span className="shrink-0 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-300">
+                          New
+                        </span>
+                      )}
+                    </span>
                     <span className="line-clamp-2 text-xs text-muted-foreground">{item.description}</span>
                     <span className="text-[11px] text-muted-foreground">{formatRelativeTime(item.createdAt)}</span>
                   </DropdownMenuItem>
