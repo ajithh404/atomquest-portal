@@ -89,7 +89,7 @@ flowchart LR
   UI --> Realtime["Supabase Realtime"]
 
   SupabaseDB --> RLS["Row Level Security Policies"]
-  SupabaseDB --> Tables["profiles, goal_sheets, goals, achievements, checkins, audit_logs, quarterly_windows"]
+  SupabaseDB --> Tables["profiles, goal_sheets, goals, achievements, checkins, audit_logs, escalation_logs, quarterly_windows"]
 ```
 
 ## Validation And Governance Rules

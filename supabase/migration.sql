@@ -608,6 +608,7 @@ DECLARE
   v_shared_safety_goal_id UUID := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb5';
   v_sales_achievement_id UUID := 'cccccccc-cccc-cccc-cccc-ccccccccccc1';
   v_tat_achievement_id UUID := 'cccccccc-cccc-cccc-cccc-ccccccccccc2';
+  v_sales_checkin_id UUID := 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee1';
   v_audit_log_id UUID := 'dddddddd-dddd-dddd-dddd-ddddddddddd1';
   v_sales_area_id UUID;
   v_process_area_id UUID;
@@ -814,7 +815,7 @@ BEGIN
     NULL
   );
 
-  -- Rahul's approved sheet totals exactly 100% after shared safety goal adjustment.
+  -- Rahul's visible approved sheet totals exactly 100%, including the shared safety goal.
   INSERT INTO public.goal_sheets (
     id,
     employee_id,
@@ -937,6 +938,22 @@ BEGIN
       v_employee_id,
       NOW() - INTERVAL '8 days'
     );
+
+  INSERT INTO public.checkins (
+    id,
+    goal_id,
+    quarter,
+    manager_id,
+    comment,
+    created_at
+  ) VALUES (
+    v_sales_checkin_id,
+    v_sales_goal_id,
+    'Q1',
+    v_manager_id,
+    'Good progress on sales this quarter, keep pushing towards the 50L target.',
+    NOW() - INTERVAL '6 days'
+  );
 
   INSERT INTO public.audit_logs (
     id,

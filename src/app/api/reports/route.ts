@@ -222,6 +222,8 @@ export async function GET() {
     const currentQuarter = windows.find((windowRow) => windowRow.is_open)?.quarter ?? 'Q1';
     const approvedSheets = sheets.filter((sheet) => sheet.status === 'approved');
     const submittedOrApprovedSheets = sheets.filter((sheet) => ['submitted', 'approved', 'returned'].includes(sheet.status));
+    const submittedEmployeeIds = new Set(submittedOrApprovedSheets.map((sheet) => sheet.employee_id));
+    const approvedEmployeeIds = new Set(approvedSheets.map((sheet) => sheet.employee_id));
     const q1Employees = new Set(
       achievements
         .filter((achievement) => achievement.quarter === 'Q1')
@@ -366,12 +368,12 @@ export async function GET() {
 
     const dashboardStats: DashboardStats = {
       totalEmployees: employees.length,
-      sheetsSubmitted: submittedOrApprovedSheets.length,
-      sheetsApproved: approvedSheets.length,
+      sheetsSubmitted: submittedEmployeeIds.size,
+      sheetsApproved: approvedEmployeeIds.size,
       q1CompletionRate: employees.length === 0 ? 0 : Math.round((q1Employees.size / employees.length) * 100),
       pendingCheckins,
       openWindows: windows.filter((windowRow) => windowRow.is_open).length,
-      submittedRate: employees.length === 0 ? 0 : Math.round((submittedOrApprovedSheets.length / employees.length) * 100),
+      submittedRate: employees.length === 0 ? 0 : Math.round((submittedEmployeeIds.size / employees.length) * 100),
       managerCheckinRate: managers.length === 0 ? 0 : Math.round((currentQuarterManagerIds.size / managers.length) * 100),
     };
 

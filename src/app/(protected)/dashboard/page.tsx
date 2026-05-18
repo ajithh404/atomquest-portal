@@ -248,9 +248,9 @@ export default function DashboardPage() {
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={quarterTrends} margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="quarter" stroke="rgba(255,255,255,0.45)" />
-                <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.45)" tickFormatter={(value: number) => `${value}%`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="quarter" tick={{ fill: 'var(--foreground)' }} />
+                <YAxis domain={[0, 100]} tick={{ fill: 'var(--foreground)' }} tickFormatter={(value: number) => `${value}%`} />
                 <Tooltip formatter={(value) => formatTooltipPercent(value, 'Average score')} />
                 <Line
                   type="monotone"
@@ -276,9 +276,9 @@ export default function DashboardPage() {
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={departmentAggregates} margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="department" stroke="rgba(255,255,255,0.45)" />
-                <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.45)" tickFormatter={(value: number) => `${value}%`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="department" tick={{ fill: 'var(--foreground)' }} />
+                <YAxis domain={[0, 100]} tick={{ fill: 'var(--foreground)' }} tickFormatter={(value: number) => `${value}%`} />
                 <Tooltip formatter={(value) => formatTooltipPercent(value, 'Completion rate')} />
                 <Bar dataKey="completionRate" fill="#059669" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={900} animationEasing="ease-out" />
               </BarChart>
@@ -339,9 +339,9 @@ export default function DashboardPage() {
           <CardContent className="h-96">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={uomDistribution} margin={{ top: 12, right: 20, bottom: 8, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="label" stroke="rgba(255,255,255,0.45)" />
-                <YAxis allowDecimals={false} stroke="rgba(255,255,255,0.45)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="label" tick={{ fill: 'var(--foreground)' }} />
+                <YAxis allowDecimals={false} tick={{ fill: 'var(--foreground)' }} />
                 <Tooltip formatter={(value) => formatTooltipCount(value, 'Goals')} />
                 <Bar dataKey="count" fill="#10B981" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={900} animationEasing="ease-out" />
               </BarChart>

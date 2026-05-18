@@ -59,6 +59,19 @@ function getSheetStatusVariant(status: GoalSheetWithGoals['status']): 'default' 
   }
 }
 
+function getSheetStatusClassName(status: GoalSheetWithGoals['status']): string {
+  switch (status) {
+    case 'approved':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
+    case 'submitted':
+      return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100';
+    case 'returned':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100';
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100';
+  }
+}
+
 export function GoalSheet({
   sheet,
   thrustAreas,
@@ -135,7 +148,9 @@ export function GoalSheet({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <CardTitle>FY 2025-26 Goal Sheet</CardTitle>
-              <Badge variant={getSheetStatusVariant(sheet.status)}>{getSheetStatusLabel(sheet.status)}</Badge>
+              <Badge variant={getSheetStatusVariant(sheet.status)} className={getSheetStatusClassName(sheet.status)}>
+                {getSheetStatusLabel(sheet.status)}
+              </Badge>
             </div>
             <CardDescription>
               {sheet.goals.length} goals configured for this cycle.
