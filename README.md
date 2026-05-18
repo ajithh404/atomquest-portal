@@ -167,15 +167,6 @@ src/lib                           Supabase clients, types, scoring, validations
 supabase/migration.sql            Schema, RLS policies, demo users, and seed data
 ```
 
-## Final Submission Checklist
-
-- Live Vercel URL works in incognito.
-- All three demo logins work.
-- Employee can view Rahul's approved sheet and log progress for open windows.
-- Manager can review direct reports and see realtime notifications.
-- Admin can manage windows, organization, reports, and audit logs.
-- Excel export downloads real populated data.
-
 ## License
 
 Private project built for AtomQuest Hackathon 1.0.
