@@ -811,9 +811,9 @@
   .auth-dashboard-preview {
     position: relative;
     display: flex;
-    min-height: 180px;
-    width: min(492px, 100%);
-    max-width: 492px;
+    min-height: 166px;
+    width: min(453px, 100%);
+    max-width: 453px;
     overflow: hidden;
     border: 1px solid rgba(16, 185, 129, 0.28);
     border-radius: 24px;
@@ -884,14 +884,15 @@
   .auth-chart::before {
     content: "";
     position: absolute;
-    left: 16px;
-    right: 16px;
-    top: 34px;
-    height: 4px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #34d399, #10b981, #6ee7b7);
-    box-shadow: 0 0 18px rgba(16, 185, 129, 0.76);
-    transform: skewY(-10deg);
+    left: 14px;
+    right: 14px;
+    top: 10px;
+    bottom: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 72'%3E%3Cpolyline points='8,48 58,30 112,43 166,19 220,32 272,13 312,24' fill='none' stroke='%2310b981' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    filter: drop-shadow(0 0 7px rgba(16, 185, 129, 0.76));
   }
 
   .auth-chart span {
@@ -904,28 +905,28 @@
   }
 
   .auth-chart span:nth-child(1) {
-    left: 12%;
-    top: 58%;
+    left: 10%;
+    top: 66%;
   }
 
   .auth-chart span:nth-child(2) {
-    left: 30%;
-    top: 45%;
+    left: 27%;
+    top: 40%;
   }
 
   .auth-chart span:nth-child(3) {
-    left: 50%;
-    top: 38%;
+    left: 46%;
+    top: 58%;
   }
 
   .auth-chart span:nth-child(4) {
-    left: 70%;
-    top: 30%;
+    left: 66%;
+    top: 26%;
   }
 
   .auth-chart span:nth-child(5) {
-    left: 88%;
-    top: 24%;
+    left: 86%;
+    top: 38%;
   }
 }
 
