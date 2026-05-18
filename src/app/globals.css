@@ -811,8 +811,8 @@
   .auth-dashboard-preview {
     position: relative;
     display: flex;
-    min-height: 216px;
-    max-width: 480px;
+    min-height: 205px;
+    max-width: 456px;
     overflow: hidden;
     border: 1px solid rgba(16, 185, 129, 0.28);
     border-radius: 24px;
@@ -839,7 +839,7 @@
   .auth-preview-sidebar {
     position: relative;
     z-index: 1;
-    width: 112px;
+    width: 106px;
     flex-shrink: 0;
     padding: 14px 11px;
     border-right: 1px solid rgba(255, 255, 255, 0.07);
@@ -866,7 +866,7 @@
 
   .auth-chart {
     position: relative;
-    height: 74px;
+    height: 70px;
     overflow: hidden;
     border-radius: 16px;
     background:
