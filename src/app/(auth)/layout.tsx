@@ -20,16 +20,16 @@ export default function AuthLayout({
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/45 bg-emerald-400/10 shadow-[0_0_28px_rgba(16,185,129,0.28)]">
                 <Image src="/logo.png" width={26} height={26} alt="AtomQuest logo" className="h-6 w-6 rounded-lg object-cover" priority />
               </div>
-              <div className="text-[22px] font-extrabold tracking-[-0.5px]">
+              <div className="text-[24px] font-extrabold tracking-[-0.5px]">
                 Atom<span className="text-emerald-400">Quest</span>
               </div>
             </div>
 
-            <h1 className="max-w-xl text-[40px] font-extrabold leading-[1.12] tracking-[-1px] text-white xl:text-[45px]">
+            <h1 className="max-w-xl text-[34px] font-extrabold leading-[1.12] tracking-[-1px] text-white xl:text-[38px]">
               Every <span className="text-emerald-400">target</span>.<br />
               Every <span className="text-emerald-400">quarter</span>.
             </h1>
-            <p className="mt-5 max-w-lg text-[15.5px] leading-7 text-white/58">
+            <p className="mt-5 max-w-lg text-[14.75px] leading-7 text-white/58">
               AtomQuest helps teams set goals, track progress, and achieve more — together.
             </p>
 
