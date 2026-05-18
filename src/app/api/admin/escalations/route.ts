@@ -6,10 +6,11 @@ import type { Achievement, Goal, GoalSheet, Profile, QuarterlyWindow } from '@/l
 import { CURRENT_CYCLE_YEAR } from '@/lib/validations';
 
 const escalationRules = ['Overdue Submission', 'Pending Approval', 'Missing Check-in'] as const;
+const uuidShape = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const reminderSchema = z.object({
   ruleName: z.enum(escalationRules),
-  targetUserId: z.string().uuid(),
+  targetUserId: z.string().regex(uuidShape, 'Invalid user id.'),
   notes: z.string().max(500).optional(),
 });
 
@@ -184,7 +185,10 @@ export async function GET() {
         : [];
 
     const pendingApproval = sheets
-      .filter((sheet) => sheet.status === 'submitted' && daysSince(sheet.submitted_at) > 3)
+      .filter((sheet) => {
+        const employee = sheet.employee ?? profileById.get(sheet.employee_id);
+        return employee?.role === 'employee' && sheet.status === 'submitted' && daysSince(sheet.submitted_at) > 3;
+      })
       .map((sheet) => {
         const employee = sheet.employee ?? profileById.get(sheet.employee_id);
         const manager = employee?.manager_id ? profileById.get(employee.manager_id) : null;
@@ -214,7 +218,7 @@ export async function GET() {
       for (const sheet of sheets.filter((item) => item.status === 'approved')) {
         const employee = sheet.employee ?? profileById.get(sheet.employee_id);
 
-        if (!employee) {
+        if (!employee || employee.role !== 'employee') {
           continue;
         }
 
