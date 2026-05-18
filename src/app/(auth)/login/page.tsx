@@ -71,20 +71,20 @@ export default function LoginPage() {
   return (
     <>
       {/* Login Card */}
-      <Card className="w-full rounded-[28px] border border-white/10 bg-white/[0.06] px-2 py-7 shadow-[0_28px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl sm:px-5">
-        <CardHeader className="items-center space-y-5 pb-6 text-center">
-          <div className="flex h-[86px] w-[86px] items-center justify-center rounded-[26px] border border-emerald-400/35 bg-emerald-400/10 shadow-[0_0_34px_rgba(16,185,129,0.24)]">
-            <Image src="/logo.png" width={56} height={56} alt="AtomQuest logo" className="h-14 w-14 rounded-2xl bg-white object-cover" priority />
+      <Card className="w-full rounded-[24px] border border-white/10 bg-white/[0.06] px-2 py-5 shadow-[0_28px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl sm:px-4">
+        <CardHeader className="items-center space-y-4 pb-5 text-center">
+          <div className="flex h-[70px] w-[70px] items-center justify-center rounded-[22px] border border-emerald-400/35 bg-emerald-400/10 shadow-[0_0_34px_rgba(16,185,129,0.24)]">
+            <Image src="/logo.png" width={46} height={46} alt="AtomQuest logo" className="h-11 w-11 rounded-2xl bg-white object-cover" priority />
           </div>
           <div>
-            <CardTitle className="text-[28px] font-extrabold tracking-[-0.5px] text-white">Welcome back</CardTitle>
-            <CardDescription className="mt-2 text-base text-white/56">
+            <CardTitle className="text-[24px] font-extrabold tracking-[-0.5px] text-white">Welcome back</CardTitle>
+            <CardDescription className="mt-1 text-sm text-white/56">
             Sign in to your account to continue
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="px-5 sm:px-7">
-          <form onSubmit={handleLogin} className="space-y-5">
+        <CardContent className="px-5 sm:px-6">
+          <form onSubmit={handleLogin} className="space-y-4">
             {error && (
               <div className="flex items-center gap-2 rounded-[10px] border border-red-400/20 bg-red-500/10 p-3 text-sm text-red-200">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -104,7 +104,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-14 rounded-2xl border-white/10 bg-white/10 text-base text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
+                className="h-12 rounded-2xl border-white/10 bg-white/10 text-sm text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
               />
             </div>
 
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-14 rounded-2xl border-white/10 bg-white/10 pr-10 text-base text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
+                  className="h-12 rounded-2xl border-white/10 bg-white/10 pr-10 text-sm text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
                 />
                 <button
                   type="button"
@@ -137,7 +137,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="mt-2 h-14 w-full rounded-2xl bg-[#059669] text-base font-bold text-white shadow-[0_16px_34px_rgba(5,150,105,0.32)] transition-all duration-150 hover:bg-[#047857]"
+              className="mt-1 h-12 w-full rounded-2xl bg-[#059669] text-base font-bold text-white shadow-[0_16px_34px_rgba(5,150,105,0.32)] transition-all duration-150 hover:bg-[#047857]"
             >
               {isLoading ? (
                 <>
@@ -151,7 +151,7 @@ export default function LoginPage() {
           </form>
 
           {/* Demo credentials section */}
-          <div className="mt-8 border-t border-white/10 pt-6">
+          <div className="mt-6 border-t border-white/10 pt-5">
             <p className="mb-3 text-center text-xs text-white/40">Quick login with demo accounts</p>
             <div className="grid grid-cols-3 gap-2">
               <button
