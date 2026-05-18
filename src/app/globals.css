@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 216 28% 7%;
-    --foreground: 210 40% 98%;
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
-    --popover: 217 33% 17%;
-    --popover-foreground: 210 40% 98%;
+    --background: 214 32% 96%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
     --primary: 161 94% 30%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 216 22% 13%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 216 22% 13%;
-    --muted-foreground: 0 0% 55%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
     --accent: 161 94% 30%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 100%;
-    --input: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 161 94% 30%;
     --radius: 10px;
     --chart-1: 160 84% 39%;
@@ -620,6 +620,126 @@
   [class*="text-red"],
   [class*="text-rose"] {
     color: #ef4444 !important;
+  }
+
+  html:not(.dark) h1,
+  html:not(.dark) h2,
+  html:not(.dark) h3 {
+    color: #0f172a;
+  }
+
+  html:not(.dark) label {
+    color: #374151;
+  }
+
+  html:not(.dark) small {
+    color: #64748b;
+  }
+
+  html:not(.dark) main,
+  html:not(.dark) [data-sidebar="inset"] {
+    background: #f1f4f8;
+    color: #0f172a;
+  }
+
+  html:not(.dark) .page-shell {
+    color: #0f172a;
+  }
+
+  html:not(.dark) .page-shell > div:first-child h1,
+  html:not(.dark) .page-shell h1 {
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) .page-shell > div:first-child p,
+  html:not(.dark) .page-shell [class*="text-white/50"],
+  html:not(.dark) main [class*="text-white/50"],
+  html:not(.dark) main [class*="text-white/45"],
+  html:not(.dark) main [class*="text-white/55"],
+  html:not(.dark) main [class*="text-white/60"],
+  html:not(.dark) main [class*="text-white/70"] {
+    color: #64748b !important;
+  }
+
+  html:not(.dark) main [class*="text-white"] {
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) .card,
+  html:not(.dark) .rounded-xl.border.bg-card,
+  html:not(.dark) [class*="rounded-xl"][class*="border"][class*="bg-card"] {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #0f172a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.04) !important;
+  }
+
+  html:not(.dark) .card:hover,
+  html:not(.dark) .rounded-xl.border.bg-card:hover,
+  html:not(.dark) [class*="rounded-xl"][class*="border"][class*="bg-card"]:hover {
+    border-color: rgba(5, 150, 105, 0.28) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  html:not(.dark) input,
+  html:not(.dark) textarea,
+  html:not(.dark) select,
+  html:not(.dark) [role="combobox"] {
+    background: #fff !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) input::placeholder,
+  html:not(.dark) textarea::placeholder {
+    color: #94a3b8;
+  }
+
+  html:not(.dark) thead tr,
+  html:not(.dark) main th {
+    background: #f8fafc;
+    color: #64748b !important;
+  }
+
+  html:not(.dark) tbody tr {
+    color: #0f172a;
+    border-bottom-color: #e5e7eb;
+  }
+
+  html:not(.dark) tbody tr:hover {
+    background: #f1f4f8;
+  }
+
+  html:not(.dark) main [class*="bg-white"],
+  html:not(.dark) main [class*="bg-background"],
+  html:not(.dark) main [class*="bg-card"] {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  html:not(.dark) main [class*="bg-white/"],
+  html:not(.dark) main [class*="bg-white\\["] {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  html:not(.dark) main [class*="border-white"],
+  html:not(.dark) main [class*="border-gray"],
+  html:not(.dark) main [class*="border-slate"],
+  html:not(.dark) main [class*="border-border"] {
+    border-color: #e5e7eb !important;
+  }
+
+  html:not(.dark) button[class*="border"][class*="bg-background"],
+  html:not(.dark) button.inline-flex.bg-secondary,
+  html:not(.dark) button.inline-flex[class*="bg-secondary"] {
+    background: #fff !important;
+    border-color: #059669 !important;
+    color: #059669 !important;
+  }
+
+  html:not(.dark) button[class*="border"][class*="bg-background"]:hover,
+  html:not(.dark) button.inline-flex.bg-secondary:hover,
+  html:not(.dark) button.inline-flex[class*="bg-secondary"]:hover {
+    background: #f0fdf4 !important;
   }
 }
 

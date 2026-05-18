@@ -158,9 +158,7 @@ export function AppSidebar() {
 
   useEffect(() => {
     const storedTheme = window.localStorage.getItem('atomquest-theme');
-    const shouldUseDark = storedTheme
-      ? storedTheme === 'dark'
-      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldUseDark = storedTheme === 'dark';
 
     document.documentElement.classList.toggle('dark', shouldUseDark);
     setIsDarkMode(shouldUseDark);

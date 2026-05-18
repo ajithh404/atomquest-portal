@@ -34,8 +34,12 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              "(function(){try{var t=localStorage.getItem('atomquest-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})();",
+            __html: `
+  try {
+    const theme = localStorage.getItem('atomquest-theme');
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+  } catch(e) {}
+`,
           }}
         />
       </head>
