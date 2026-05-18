@@ -110,9 +110,6 @@ export default function AuthLayout({
                 </div>
               ))}
             </div>
-            <p className="mt-7 text-center text-xs text-white/34">
-              © 2026 Atomberg Technologies Pvt. Ltd. All rights reserved.
-            </p>
           </div>
         </section>
 
