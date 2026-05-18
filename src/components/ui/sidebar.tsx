@@ -272,12 +272,15 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { state, toggleSidebar } = useSidebar()
+  const tooltipLabel =
+    state === "collapsed" ? "Expand the sidebar" : "Collapse the sidebar"
 
-  return (
+  const trigger = (
     <Button
       ref={ref}
       data-sidebar="trigger"
+      aria-label={tooltipLabel}
       variant="ghost"
       size="icon"
       className={cn("h-7 w-7", className)}
@@ -288,8 +291,17 @@ const SidebarTrigger = React.forwardRef<
       {...props}
     >
       <ViewVerticalIcon />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">{tooltipLabel}</span>
     </Button>
+  )
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+      <TooltipContent side="bottom" align="start">
+        {tooltipLabel}
+      </TooltipContent>
+    </Tooltip>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
