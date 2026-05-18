@@ -812,7 +812,7 @@
     position: relative;
     display: flex;
     min-height: 180px;
-    max-width: 401px;
+    max-width: 447px;
     overflow: hidden;
     border: 1px solid rgba(16, 185, 129, 0.28);
     border-radius: 24px;
@@ -873,6 +873,7 @@
       linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     background-size: 100% 19px, 52px 100%;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
   .auth-chart::before {
@@ -881,20 +882,20 @@
     left: 16px;
     right: 16px;
     top: 34px;
-    height: 3px;
+    height: 4px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #10b981, #059669, #34d399);
-    box-shadow: 0 0 16px rgba(16, 185, 129, 0.58);
+    background: linear-gradient(90deg, #34d399, #10b981, #6ee7b7);
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.76);
     transform: skewY(-10deg);
   }
 
   .auth-chart span {
     position: absolute;
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 999px;
-    background: #10b981;
-    box-shadow: 0 0 14px rgba(16, 185, 129, 0.72);
+    background: #34d399;
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.86);
   }
 
   .auth-chart span:nth-child(1) {

@@ -55,7 +55,7 @@ export default function AuthLayout({
                     ['In Progress', '24', '-4.2%'],
                   ].map(([label, value, trend]) => (
                     <div key={label} className="rounded-xl border border-white/10 bg-white/[0.045] p-3 shadow-[0_12px_28px_rgba(2,6,23,0.16)]">
-                      <div className="text-[11px] font-medium text-white/50">{label}</div>
+                      <div className="text-[11px] font-bold text-white/70">{label}</div>
                       <div className="mt-1.5 text-xl font-bold text-white">{value}</div>
                       <div className={trend.startsWith('+') ? 'mt-1 text-[11px] font-bold text-emerald-400' : 'mt-1 text-[11px] font-bold text-red-400'}>
                         {trend}
@@ -66,7 +66,7 @@ export default function AuthLayout({
                 <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm font-bold text-white">Goal Progress</span>
-                    <span className="text-[11px] text-white/45">Last 7 days</span>
+                    <span className="text-[11px] font-semibold text-white/60">Last 7 days</span>
                   </div>
                   <div className="auth-chart">
                     <span />
