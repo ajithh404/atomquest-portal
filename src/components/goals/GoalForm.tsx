@@ -113,7 +113,7 @@ export function GoalForm({
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       {serverError && (
-        <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {serverError}
         </div>
       )}
@@ -149,7 +149,7 @@ export function GoalForm({
         <Label htmlFor={descriptionId}>Description</Label>
         <textarea
           id={descriptionId}
-          className="min-h-24 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none ring-offset-background placeholder:text-muted-foreground focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-24 rounded-xl border border-white/10 bg-white/[0.03] border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none ring-offset-background placeholder:text-white/50 focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           disabled={sharedFieldsReadOnly || isSubmitting}
           {...register('description')}
         />
@@ -219,13 +219,13 @@ export function GoalForm({
       )}
 
       {uomType === 'zero' && (
-        <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] bg-white/[0.04] px-3 py-2 text-sm text-white/50">
           Zero tolerance goals succeed only when the actual value is 0.
         </div>
       )}
 
       {sharedFieldsReadOnly && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] border-amber-400/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
           Shared goals allow only weightage edits. Goal details stay linked to the source goal.
         </div>
       )}

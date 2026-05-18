@@ -14,7 +14,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 max-w-2xl">
+      <div className="page-shell space-y-6 max-w-2xl">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
       </div>
@@ -31,10 +31,10 @@ export default function ProfilePage() {
     .slice(0, 2);
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="page-shell space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground">Your account details and preferences.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Profile</h1>
+        <p className="text-white/50">Your account details and preferences.</p>
       </div>
 
       <Card>
@@ -55,19 +55,19 @@ export default function ProfilePage() {
         <CardContent className="pt-6">
           <dl className="space-y-4">
             <div className="flex justify-between">
-              <dt className="text-sm font-medium text-muted-foreground">Role</dt>
+              <dt className="text-sm font-medium text-white/50">Role</dt>
               <dd>
                 <Badge variant="secondary">{getRoleLabel(profile.role as UserRole)}</Badge>
               </dd>
             </div>
             <Separator />
             <div className="flex justify-between">
-              <dt className="text-sm font-medium text-muted-foreground">Department</dt>
+              <dt className="text-sm font-medium text-white/50">Department</dt>
               <dd className="text-sm">{profile.department || '—'}</dd>
             </div>
             <Separator />
             <div className="flex justify-between">
-              <dt className="text-sm font-medium text-muted-foreground">Member since</dt>
+              <dt className="text-sm font-medium text-white/50">Member since</dt>
               <dd className="text-sm">
                 {new Date(profile.created_at).toLocaleDateString('en-IN', {
                   year: 'numeric',

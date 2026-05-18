@@ -125,7 +125,7 @@ export default function GoalSheetDetailPage({ params }: GoalSheetDetailPageProps
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-9 w-32" />
         <Skeleton className="h-36" />
         <Skeleton className="h-48" />
@@ -134,7 +134,7 @@ export default function GoalSheetDetailPage({ params }: GoalSheetDetailPageProps
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <Button asChild variant="ghost" className="px-0">
         <Link href="/goals">
           <ArrowLeft className="h-4 w-4" />

@@ -73,7 +73,7 @@ export default function TeamPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64" />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -87,16 +87,16 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Team Goals</h1>
-        <p className="text-muted-foreground">Review and approve goal sheets from your direct reports.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Team Goals</h1>
+        <p className="text-white/50">Review and approve goal sheets from your direct reports.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Direct Reports</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/50">Direct Reports</CardTitle>
             <Users className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -105,7 +105,7 @@ export default function TeamPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pending Review</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/50">Pending Review</CardTitle>
             <Clock className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
@@ -114,7 +114,7 @@ export default function TeamPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Approved</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/50">Approved</CardTitle>
             <ClipboardCheck className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
@@ -123,7 +123,7 @@ export default function TeamPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Returned</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/50">Returned</CardTitle>
             <UserCheck className="h-4 w-4 text-rose-500" />
           </CardHeader>
           <CardContent>
@@ -135,8 +135,8 @@ export default function TeamPage() {
       {sheets.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <Users className="h-8 w-8 text-muted-foreground" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
+              <Users className="h-8 w-8 text-white/50" />
             </div>
             <CardTitle className="mb-2 text-lg">No Submitted Sheets</CardTitle>
             <CardDescription className="max-w-sm text-center">

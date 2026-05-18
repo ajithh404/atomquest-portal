@@ -124,7 +124,7 @@ export default function CheckinsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
       </div>
@@ -132,11 +132,11 @@ export default function CheckinsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Check-ins</h1>
-          <p className="text-muted-foreground">Review quarterly progress and add comments for direct reports.</p>
+          <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Check-ins</h1>
+          <p className="text-white/50">Review quarterly progress and add comments for direct reports.</p>
         </div>
         <div className="w-full lg:w-72">
           <Select
@@ -163,8 +163,8 @@ export default function CheckinsPage() {
       {directReports.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <MessageSquare className="h-8 w-8 text-muted-foreground" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
+              <MessageSquare className="h-8 w-8 text-white/50" />
             </div>
             <CardTitle className="mb-2 text-lg">No Direct Reports</CardTitle>
             <CardDescription className="max-w-sm text-center">
@@ -175,8 +175,8 @@ export default function CheckinsPage() {
       ) : goals.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <MessageSquare className="h-8 w-8 text-muted-foreground" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
+              <MessageSquare className="h-8 w-8 text-white/50" />
             </div>
             <CardTitle className="mb-2 text-lg">No Approved Goals</CardTitle>
             <CardDescription className="max-w-sm text-center">
@@ -207,16 +207,16 @@ export default function CheckinsPage() {
                 </CardHeader>
                 <CardContent className="space-y-5">
                   <div className="grid gap-3 md:grid-cols-3">
-                    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
-                      <div className="text-muted-foreground">Latest Quarter</div>
+                    <div className="rounded-md bg-white/[0.04] px-3 py-2 text-sm">
+                      <div className="text-white/50">Latest Quarter</div>
                       <div className="font-medium">{latestAchievement?.quarter ?? '-'}</div>
                     </div>
-                    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
-                      <div className="text-muted-foreground">Actual</div>
+                    <div className="rounded-md bg-white/[0.04] px-3 py-2 text-sm">
+                      <div className="text-white/50">Actual</div>
                       <div className="font-medium">{latestAchievement?.actual_value ?? latestAchievement?.actual_date ?? '-'}</div>
                     </div>
-                    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
-                      <div className="text-muted-foreground">Score</div>
+                    <div className="rounded-md bg-white/[0.04] px-3 py-2 text-sm">
+                      <div className="text-white/50">Score</div>
                       <div className="font-medium">{formatScore(latestAchievement?.progress_score)}</div>
                     </div>
                   </div>

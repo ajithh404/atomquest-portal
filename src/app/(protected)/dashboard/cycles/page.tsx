@@ -76,7 +76,7 @@ export default function CyclesPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
       </div>
@@ -84,10 +84,10 @@ export default function CyclesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Cycle Management</h1>
-        <p className="text-muted-foreground">Open and close quarterly achievement windows.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Cycle Management</h1>
+        <p className="text-white/50">Open and close quarterly achievement windows.</p>
       </div>
 
       <Card>
@@ -99,11 +99,11 @@ export default function CyclesPage() {
           {windows.map((windowRow) => (
             <div
               key={windowRow.id}
-              className="flex flex-col gap-3 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted">
-                  <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white/[0.06]">
+                  <CalendarDays className="h-5 w-5 text-white/50" />
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -112,7 +112,7 @@ export default function CyclesPage() {
                       {windowRow.is_open ? 'Open' : 'Closed'}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/50">
                     {new Date(windowRow.start_date).toLocaleDateString()} - {new Date(windowRow.end_date).toLocaleDateString()}
                   </p>
                 </div>

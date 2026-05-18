@@ -153,7 +153,7 @@ export default function GoalsPage() {
 
   if (isProfileLoading || isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-72" />
         <Skeleton className="h-36" />
@@ -163,11 +163,11 @@ export default function GoalsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Goals</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">My Goals</h1>
+          <p className="text-white/50">
             Welcome back, {profile?.name?.split(' ')[0] ?? 'there'}. Build and submit your FY 2025-26 goal sheet.
           </p>
         </div>
@@ -192,8 +192,8 @@ export default function GoalsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <ClipboardList className="h-8 w-8 text-muted-foreground" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
+              <ClipboardList className="h-8 w-8 text-white/50" />
             </div>
             <Button onClick={createSheet} disabled={isBusy}>
               <Plus className="h-4 w-4" />

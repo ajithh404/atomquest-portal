@@ -133,6 +133,22 @@ function getSidebarRoleLabel(role: UserRole) {
   }
 }
 
+function isNavItemActive(pathname: string, itemUrl: string) {
+  if (pathname === itemUrl) {
+    return true;
+  }
+
+  if (itemUrl === '/team') {
+    return pathname.startsWith('/team/') && !pathname.startsWith('/team/checkins');
+  }
+
+  if (itemUrl === '/goals') {
+    return pathname.startsWith('/goals/') && !pathname.startsWith('/goals/progress');
+  }
+
+  return false;
+}
+
 export function AppSidebar() {
   const { profile } = useProfile();
   const router = useRouter();
@@ -199,7 +215,7 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === item.url || (item.url !== '/' && pathname.startsWith(item.url + '/'))}
+                      isActive={isNavItemActive(pathname, item.url)}
                       tooltip={item.title}
                       className="h-10 px-3"
                     >

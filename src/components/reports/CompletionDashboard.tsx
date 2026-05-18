@@ -24,21 +24,21 @@ export function CompletionDashboard({ stats }: CompletionDashboardProps) {
       value: formatRate(stats.submittedRate),
       helper: 'FY 2025-26 goal sheets',
       icon: ClipboardCheck,
-      iconClass: 'text-emerald-600',
+      iconClass: 'text-emerald-400',
     },
     {
       title: 'Q1 Achievements',
       value: formatRate(stats.q1AchievementRate),
       helper: 'approved employees with Q1 logs',
       icon: TrendingUp,
-      iconClass: 'text-blue-600',
+      iconClass: 'text-emerald-400',
     },
     {
       title: 'Manager Check-ins',
       value: formatRate(stats.managerCheckinRate),
       helper: 'managers with current quarter comments',
       icon: MessageSquareCheck,
-      iconClass: 'text-amber-600',
+      iconClass: 'text-amber-400',
     },
   ];
 
@@ -47,12 +47,12 @@ export function CompletionDashboard({ stats }: CompletionDashboardProps) {
       {cards.map((card) => (
         <Card key={card.title}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/50">{card.title}</CardTitle>
             <card.icon className={`h-4 w-4 ${card.iconClass}`} />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{card.value}</div>
-            <p className="mt-1 text-xs text-muted-foreground">{card.helper}</p>
+            <p className="mt-1 text-xs text-white/50">{card.helper}</p>
           </CardContent>
         </Card>
       ))}

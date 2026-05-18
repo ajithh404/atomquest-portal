@@ -171,14 +171,14 @@ export function GoalSheet({
         </CardHeader>
         <CardContent className="space-y-4">
           {sheet.return_comment && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] border-amber-400/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
               <span className="font-medium">Manager return comment:</span> {sheet.return_comment}
             </div>
           )}
 
           <div
-            className={`flex flex-col gap-3 rounded-md border px-4 py-3 sm:flex-row sm:items-center sm:justify-between ${
-              isTotalValid ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-destructive/30 bg-destructive/10 text-destructive'
+            className={`flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 sm:flex-row sm:items-center sm:justify-between ${
+              isTotalValid ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300' : 'border-destructive/30 bg-destructive/10 text-destructive'
             }`}
           >
             <div className="flex items-center gap-2">
@@ -193,8 +193,8 @@ export function GoalSheet({
       {sheet.goals.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-              <ClipboardList className="h-7 w-7 text-muted-foreground" />
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.06]">
+              <ClipboardList className="h-7 w-7 text-white/50" />
             </div>
             <CardTitle className="mb-2 text-lg">No Goals Added</CardTitle>
             <CardDescription className="max-w-sm">
@@ -205,7 +205,7 @@ export function GoalSheet({
       ) : (
         <>
           {!editable && (
-            <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] bg-white/[0.04] px-3 py-2 text-sm text-white/50">
               {sheet.status === 'approved'
                 ? 'This goal sheet is approved and locked. Ask an admin to unlock it for corrections.'
                 : 'This goal sheet has been submitted for review and cannot be edited right now.'}

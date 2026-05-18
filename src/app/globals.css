@@ -74,11 +74,12 @@
   }
 
   html {
-    font-family: Manrope, sans-serif;
+    font-family: var(--font-manrope), sans-serif;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground;
+    font-family: var(--font-manrope), sans-serif;
     font-size: 14px;
     font-weight: 400;
     line-height: 1.6;
@@ -224,6 +225,23 @@
 
   main {
     animation: fadeIn 300ms ease-out both;
+  }
+
+  .page-shell {
+    color: #fff;
+  }
+
+  .page-shell > div:first-child h1,
+  .page-shell h1 {
+    color: #fff !important;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .page-shell > div:first-child p,
+  .page-shell [class*="text-white\\/50"] {
+    color: rgba(255, 255, 255, 0.5) !important;
   }
 
   header.sticky {

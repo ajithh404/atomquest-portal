@@ -78,21 +78,21 @@ export function GoalCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {goal.description && <p className="text-sm text-muted-foreground">{goal.description}</p>}
+        {goal.description && <p className="text-sm text-white/50">{goal.description}</p>}
         <div className="grid gap-2 text-sm sm:grid-cols-3">
-          <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center gap-2 rounded-md bg-white/[0.04] px-3 py-2">
+            <CalendarDays className="h-4 w-4 text-white/50" />
             <span>{getUomLabel(goal)}</span>
           </div>
-          <div className="rounded-md bg-muted/50 px-3 py-2">
-            <span className="text-muted-foreground">UoM:</span> {goal.uom_type}
+          <div className="rounded-md bg-white/[0.04] px-3 py-2">
+            <span className="text-white/50">UoM:</span> {goal.uom_type}
           </div>
-          <div className="rounded-md bg-muted/50 px-3 py-2">
-            <span className="text-muted-foreground">Status:</span> {getStatusLabel(goal.status)}
+          <div className="rounded-md bg-white/[0.04] px-3 py-2">
+            <span className="text-white/50">Status:</span> {getStatusLabel(goal.status)}
           </div>
         </div>
         {goal.shared_from && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs text-white/50">
             <Copy className="h-3.5 w-3.5" />
             Linked to source goal
           </div>

@@ -271,7 +271,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-9 w-32" />
         <Skeleton className="h-36" />
         <Skeleton className="h-64" />
@@ -281,7 +281,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
 
   if (!sheet) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Button asChild variant="ghost" className="px-0">
           <Link href="/team">
             <ArrowLeft className="h-4 w-4" />
@@ -289,7 +289,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
           </Link>
         </Button>
         <Card>
-          <CardContent className="py-10 text-center text-muted-foreground">Goal sheet could not be loaded.</CardContent>
+          <CardContent className="py-10 text-center text-white/50">Goal sheet could not be loaded.</CardContent>
         </Card>
       </div>
     );
@@ -300,7 +300,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
   const totalWeightage = calculateTotalWeightage(sheet.goals);
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <Button asChild variant="ghost" className="px-0">
         <Link href="/team">
           <ArrowLeft className="h-4 w-4" />
@@ -340,7 +340,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
         </CardHeader>
         {!canReview && (
           <CardContent>
-            <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] bg-white/[0.04] px-3 py-2 text-sm text-white/50">
               Review edits are available only while a sheet is submitted.
             </div>
           </CardContent>
@@ -419,7 +419,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
             <Label htmlFor="return-comment">Return Comment</Label>
             <textarea
               id="return-comment"
-              className="min-h-28 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
+              className="min-h-28 rounded-xl border border-white/10 bg-white/[0.03] border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
               value={returnComment}
               onChange={(event) => setReturnComment(event.target.value)}
             />
@@ -447,7 +447,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
             <Label htmlFor="unlock-reason">Unlock Reason</Label>
             <textarea
               id="unlock-reason"
-              className="min-h-28 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
+              className="min-h-28 rounded-xl border border-white/10 bg-white/[0.03] border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
               value={unlockReason}
               onChange={(event) => setUnlockReason(event.target.value)}
               placeholder="Example: Correction requested by HR"
@@ -487,11 +487,11 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
             <div className="space-y-2">
               <Label>Recipients</Label>
               {eligibleShareRecipients.length === 0 ? (
-                <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                <div className="rounded-xl border border-white/10 bg-white/[0.03] bg-white/[0.04] px-3 py-2 text-sm text-white/50">
                   No other eligible employees are available.
                 </div>
               ) : (
-                <div className="grid max-h-56 gap-2 overflow-y-auto rounded-md border p-3">
+                <div className="grid max-h-56 gap-2 overflow-y-auto rounded-xl border border-white/10 bg-white/[0.03] p-3">
                   {eligibleShareRecipients.map((report) => (
                     <label key={report.id} className="flex items-center gap-2 text-sm">
                       <input
@@ -501,7 +501,7 @@ export default function TeamSheetPage({ params }: TeamSheetPageProps) {
                         onChange={() => toggleShareRecipient(report.id)}
                       />
                       <span>{report.name}</span>
-                      <span className="text-muted-foreground">({report.department ?? 'No department'})</span>
+                      <span className="text-white/50">({report.department ?? 'No department'})</span>
                     </label>
                   ))}
                 </div>

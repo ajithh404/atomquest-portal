@@ -44,7 +44,7 @@ function getEntryKey(goalId: string, quarter: Quarter) {
 
 function getScoreClass(score: number | null | undefined) {
   if (score === null || score === undefined) {
-    return 'text-muted-foreground';
+    return 'text-white/50';
   }
 
   if (score >= 0.8) {
@@ -175,7 +175,7 @@ export default function ProgressPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
       </div>
@@ -183,17 +183,17 @@ export default function ProgressPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">My Progress</h1>
-        <p className="text-muted-foreground">Track quarterly achievements against approved goals.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">My Progress</h1>
+        <p className="text-white/50">Track quarterly achievements against approved goals.</p>
       </div>
 
       {goals.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <BarChart3 className="h-8 w-8 text-muted-foreground" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
+              <BarChart3 className="h-8 w-8 text-white/50" />
             </div>
             <CardTitle className="mb-2 text-lg">No Approved Goals</CardTitle>
             <CardDescription className="max-w-sm text-center">
@@ -202,7 +202,7 @@ export default function ProgressPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-6">
+        <div className="page-shell space-y-6">
           {quarters.map((quarter) => {
             const windowRow = windowByQuarter.get(quarter);
             const isOpen = Boolean(windowRow?.is_open);
@@ -229,14 +229,14 @@ export default function ProgressPage() {
                     const entry = entries[key];
 
                     return (
-                      <div key={goal.id} className="rounded-md border p-4">
+                      <div key={goal.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
                               <h3 className="font-medium">{goal.title}</h3>
                               {goal.is_shared && <Badge variant="outline">Shared</Badge>}
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-white/50">
                               {goal.thrust_area?.name ?? 'Thrust Area'} · {getTargetLabel(goal)}
                             </p>
                           </div>
@@ -301,7 +301,7 @@ export default function ProgressPage() {
                             </div>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2 rounded-md bg-white/[0.04] px-3 py-2 text-sm text-white/50">
                             <Lock className="h-4 w-4" />
                             Window closed
                           </div>

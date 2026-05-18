@@ -5,15 +5,15 @@ import { Crosshair } from 'lucide-react';
 
 export default function ThrustAreasPage() {
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Thrust Areas</h1>
-        <p className="text-muted-foreground">Configure goal categories for the organization.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Thrust Areas</h1>
+        <p className="text-white/50">Configure goal categories for the organization.</p>
       </div>
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center justify-center py-16">
-          <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-            <Crosshair className="w-8 h-8 text-muted-foreground" />
+          <div className="w-16 h-16 rounded-full bg-white/[0.06] flex items-center justify-center mb-4">
+            <Crosshair className="w-8 h-8 text-white/50" />
           </div>
           <CardTitle className="text-lg mb-2">Thrust Area Configuration</CardTitle>
           <CardDescription className="text-center max-w-sm">

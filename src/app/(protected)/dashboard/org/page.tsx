@@ -87,7 +87,7 @@ export default function OrgPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
       </div>
@@ -95,10 +95,10 @@ export default function OrgPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Organization</h1>
-        <p className="text-muted-foreground">Manage reporting structure and manager assignments.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Organization</h1>
+        <p className="text-white/50">Manage reporting structure and manager assignments.</p>
       </div>
 
       <Card>
@@ -113,11 +113,11 @@ export default function OrgPage() {
             return (
               <div
                 key={profile.id}
-                className="grid gap-3 rounded-md border p-4 lg:grid-cols-[1fr_260px]"
+                className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 lg:grid-cols-[1fr_260px]"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted">
-                    <Building2 className="h-5 w-5 text-muted-foreground" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white/[0.06]">
+                    <Building2 className="h-5 w-5 text-white/50" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -126,7 +126,7 @@ export default function OrgPage() {
                         {profile.role}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-white/50">
                       {profile.email} · {profile.department ?? 'No department'} · Manager: {currentManager?.name ?? 'None'}
                     </p>
                   </div>

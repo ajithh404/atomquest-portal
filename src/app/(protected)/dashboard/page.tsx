@@ -99,7 +99,7 @@ export default function DashboardPage() {
 
   if (isLoading || !stats) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64" />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -120,51 +120,51 @@ export default function DashboardPage() {
       value: stats.totalEmployees,
       helper: 'employee profiles',
       icon: Users,
-      className: 'text-blue-600',
+      className: 'text-emerald-400',
     },
     {
       title: 'Sheets Submitted',
       value: stats.sheetsSubmitted,
       helper: `${stats.submittedRate}% of employees`,
       icon: ClipboardCheck,
-      className: 'text-emerald-600',
+      className: 'text-emerald-400',
     },
     {
       title: 'Sheets Approved',
       value: stats.sheetsApproved,
       helper: 'approved this cycle',
       icon: LayoutDashboard,
-      className: 'text-violet-600',
+      className: 'text-emerald-400',
     },
     {
       title: 'Q1 Completion %',
       value: `${stats.q1CompletionRate}%`,
       helper: 'employees with Q1 logs',
       icon: TrendingUp,
-      className: 'text-amber-600',
+      className: 'text-amber-400',
     },
     {
       title: 'Pending Check-ins',
       value: stats.pendingCheckins,
       helper: `${currentQuarter} manager comments`,
       icon: MessageSquareWarning,
-      className: 'text-rose-600',
+      className: 'text-red-400',
     },
     {
       title: 'Open Windows',
       value: stats.openWindows,
       helper: 'achievement windows',
       icon: CalendarDays,
-      className: 'text-cyan-600',
+      className: 'text-emerald-400',
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Organization-wide goal tracking and governance overview.</p>
+          <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Admin Dashboard</h1>
+          <p className="text-white/50">Organization-wide goal tracking and governance overview.</p>
         </div>
         <Badge>Admin</Badge>
       </div>
@@ -173,12 +173,12 @@ export default function DashboardPage() {
         {cards.map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+              <CardTitle className="text-sm font-medium text-white/50">{card.title}</CardTitle>
               <card.icon className={`h-4 w-4 ${card.className}`} />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{card.value}</div>
-              <p className="mt-1 text-xs text-muted-foreground">{card.helper}</p>
+              <p className="mt-1 text-xs text-white/50">{card.helper}</p>
             </CardContent>
           </Card>
         ))}

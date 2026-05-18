@@ -53,7 +53,7 @@ export function CheckinForm({ isSubmitting = false, defaultQuarter = 'Q1', onSub
           <Label htmlFor="checkin-comment">Comment</Label>
           <textarea
             id="checkin-comment"
-            className="min-h-20 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
+            className="min-h-20 rounded-xl border border-white/10 bg-white/[0.03] border-input bg-transparent px-3 py-2 text-sm shadow-sm outline-none focus:ring-1 focus:ring-ring"
             value={comment}
             onChange={(event) => setComment(event.target.value)}
             placeholder="Add coaching notes, risks, or next steps"

@@ -113,7 +113,7 @@ export default function ReportsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-28" />
         <Skeleton className="h-64" />
@@ -122,11 +122,11 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
-          <p className="text-muted-foreground">Achievement reports and export tools.</p>
+          <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Reports</h1>
+          <p className="text-white/50">Achievement reports and export tools.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton rows={filteredRows} columns={columns} fileName="atomquest-achievement-report" format="csv" />
@@ -186,15 +186,15 @@ export default function ReportsPage() {
           </div>
 
           {filteredRows.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-md border border-dashed py-16 text-center">
-              <FileText className="mb-3 h-8 w-8 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] border-dashed py-16 text-center">
+              <FileText className="mb-3 h-8 w-8 text-white/50" />
               <p className="font-medium">No report rows found</p>
-              <p className="text-sm text-muted-foreground">Adjust filters or wait for achievements to be logged.</p>
+              <p className="text-sm text-white/50">Adjust filters or wait for achievements to be logged.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-md border">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03]">
               <table className="w-full min-w-[980px] text-sm">
-                <thead className="bg-muted/50 text-left">
+                <thead className="bg-white/[0.04] text-left">
                   <tr>
                     {columns.map((column) => (
                       <th key={String(column.key)} className="px-3 py-2 font-medium">

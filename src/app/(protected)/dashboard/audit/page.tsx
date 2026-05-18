@@ -78,7 +78,7 @@ export default function AuditPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="page-shell space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
       </div>
@@ -86,10 +86,10 @@ export default function AuditPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-shell space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
-        <p className="text-muted-foreground">Track post-lock changes and admin actions.</p>
+        <h1 className="text-[28px] font-bold tracking-[-0.5px] text-white">Audit Log</h1>
+        <p className="text-white/50">Track post-lock changes and admin actions.</p>
       </div>
 
       <Card>
@@ -106,15 +106,15 @@ export default function AuditPage() {
           </div>
 
           {filteredRows.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-md border border-dashed py-16 text-center">
-              <Search className="mb-3 h-8 w-8 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] border-dashed py-16 text-center">
+              <Search className="mb-3 h-8 w-8 text-white/50" />
               <p className="font-medium">No audit events found</p>
-              <p className="text-sm text-muted-foreground">Audit rows appear after admin governance actions.</p>
+              <p className="text-sm text-white/50">Audit rows appear after admin governance actions.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-md border">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03]">
               <table className="w-full min-w-[1100px] text-sm">
-                <thead className="bg-muted/50 text-left">
+                <thead className="bg-white/[0.04] text-left">
                   <tr>
                     <th className="px-3 py-2 font-medium">Timestamp</th>
                     <th className="px-3 py-2 font-medium">User</th>

@@ -6,7 +6,7 @@ import "./globals.css";
 const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
+  variable: "--font-manrope",
 });
 
 export const metadata: Metadata = {
@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   description:
     "In-house goal setting and tracking portal for Atomberg Technologies. Set goals, track quarterly achievements, and drive organizational alignment.",
   keywords: ["goal tracking", "performance management", "OKR", "Atomberg"],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
