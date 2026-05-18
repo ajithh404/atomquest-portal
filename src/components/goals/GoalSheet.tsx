@@ -155,6 +155,7 @@ export function GoalSheet({
                     <span>
                       <Button
                         type="button"
+                        className="btn-accent"
                         disabled={Boolean(submitBlockReason) || isSubmittingSheet || isBusy}
                         onClick={handleSubmitSheet}
                       >

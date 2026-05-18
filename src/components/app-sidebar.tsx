@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/components/profile-provider';
 import { getRoleLabel } from '@/lib/auth';
@@ -27,7 +29,6 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
-  Target,
   ClipboardList,
   BarChart3,
   Users,
@@ -41,6 +42,9 @@ import {
   LogOut,
   ChevronUp,
   User,
+  Moon,
+  Sun,
+  Bell,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { UserRole } from '@/lib/types';
@@ -120,6 +124,17 @@ export function AppSidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const storedTheme = window.localStorage.getItem('atomquest-theme');
+    const shouldUseDark = storedTheme
+      ? storedTheme === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    document.documentElement.classList.toggle('dark', shouldUseDark);
+    setIsDarkMode(shouldUseDark);
+  }, []);
 
   if (!profile) return null;
 
@@ -137,18 +152,23 @@ export function AppSidebar() {
     router.refresh();
   }
 
+  function toggleDarkMode() {
+    const nextMode = !isDarkMode;
+    document.documentElement.classList.toggle('dark', nextMode);
+    window.localStorage.setItem('atomquest-theme', nextMode ? 'dark' : 'light');
+    setIsDarkMode(nextMode);
+  }
+
   return (
-    <Sidebar variant="inset">
-      <SidebarHeader>
+    <Sidebar variant="inset" className="p-0">
+      <SidebarHeader className="border-b border-white/10">
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-3 px-2 py-1.5">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 shadow-sm">
-                <Target className="w-4 h-4 text-white" />
-              </div>
+            <div className="flex items-center gap-3 rounded-xl px-2 py-2">
+              <Image src="/logo.png" width={32} height={32} alt="AtomQuest logo" className="h-8 w-8 rounded-lg bg-white object-cover shadow-sm" />
               <div className="flex flex-col">
-                <span className="text-sm font-semibold tracking-tight">AtomQuest</span>
-                <span className="text-[10px] text-muted-foreground">Goal Tracking Portal</span>
+                <span className="text-sm font-semibold tracking-tight text-white">AtomQuest</span>
+                <span className="text-[11px] text-white/55">Every target. Every quarter.</span>
               </div>
             </div>
           </SidebarMenuItem>
@@ -167,6 +187,7 @@ export function AppSidebar() {
                       asChild
                       isActive={pathname === item.url || (item.url !== '/' && pathname.startsWith(item.url + '/'))}
                       tooltip={item.title}
+                      className="h-10 px-3"
                     >
                       <Link href={item.url}>
                         <item.icon className="w-4 h-4" />
@@ -182,24 +203,42 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
+        <div className="mb-2 flex items-center gap-2 px-1">
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white"
+            aria-label="Notifications"
+          >
+            <Bell className="h-4 w-4 animate-[bellBounce_1.8s_ease-in-out_infinite]" />
+          </button>
+          <button
+            type="button"
+            onClick={toggleDarkMode}
+            className="flex h-9 flex-1 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 text-xs font-medium text-white/75 transition hover:bg-white/10 hover:text-white"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {isDarkMode ? 'Light mode' : 'Dark mode'}
+          </button>
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent">
+                <SidebarMenuButton size="lg" className="h-auto rounded-xl border border-white/10 bg-white/[0.06] p-3 text-white data-[state=open]:bg-white/10">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-600 to-cyan-500 text-white text-xs font-medium">
+                    <AvatarFallback className="bg-emerald-600 text-white text-xs font-medium">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col flex-1 text-left text-sm leading-tight">
-                    <span className="font-medium truncate">{profile.name}</span>
-                    <span className="text-xs text-muted-foreground truncate">{profile.email}</span>
+                    <span className="font-medium truncate text-white">{profile.name}</span>
+                    <span className="text-xs text-white/50 truncate">{profile.email}</span>
                   </div>
                   <Badge variant={getRoleBadgeVariant(profile.role as UserRole)} className="text-[10px] px-1.5">
                     {getRoleLabel(profile.role as UserRole)}
                   </Badge>
-                  <ChevronUp className="ml-auto w-4 h-4" />
+                  <ChevronUp className="ml-auto w-4 h-4 text-white/50" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
