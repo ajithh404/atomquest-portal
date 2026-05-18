@@ -812,7 +812,8 @@
     position: relative;
     display: flex;
     min-height: 180px;
-    max-width: 447px;
+    width: min(492px, 100%);
+    max-width: 492px;
     overflow: hidden;
     border: 1px solid rgba(16, 185, 129, 0.28);
     border-radius: 24px;
@@ -826,6 +827,10 @@
     transform: perspective(1000px) rotateX(3deg) rotateY(5deg) rotateZ(-0.5deg);
     transform-origin: left center;
     backdrop-filter: blur(18px);
+  }
+
+  .auth-dashboard-preview > .flex-1 {
+    min-width: 0;
   }
 
   .auth-dashboard-preview::before {

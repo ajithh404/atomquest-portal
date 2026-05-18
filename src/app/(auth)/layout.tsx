@@ -54,10 +54,10 @@ export default function AuthLayout({
                     ['Completed', '96', '+8.3%'],
                     ['In Progress', '24', '-4.2%'],
                   ].map(([label, value, trend]) => (
-                    <div key={label} className="rounded-xl border border-white/10 bg-white/[0.045] p-3 shadow-[0_12px_28px_rgba(2,6,23,0.16)]">
-                      <div className="text-[11px] font-bold text-white/70">{label}</div>
-                      <div className="mt-1.5 text-xl font-bold text-white">{value}</div>
-                      <div className={trend.startsWith('+') ? 'mt-1 text-[11px] font-bold text-emerald-400' : 'mt-1 text-[11px] font-bold text-red-400'}>
+                    <div key={label} className="min-w-0 rounded-xl border border-white/10 bg-white/[0.045] p-2.5 shadow-[0_12px_28px_rgba(2,6,23,0.16)]">
+                      <div className="truncate text-[10px] font-bold text-white/70">{label}</div>
+                      <div className="mt-1.5 text-lg font-bold text-white">{value}</div>
+                      <div className={trend.startsWith('+') ? 'mt-1 text-[10px] font-bold text-emerald-400' : 'mt-1 text-[10px] font-bold text-red-400'}>
                         {trend}
                       </div>
                     </div>
