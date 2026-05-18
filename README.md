@@ -53,6 +53,7 @@ The Supabase migration seeds a complete FY2025-26 journey:
 - Recharts analytics for progress trends, department completion, thrust-area distribution, and UoM mix.
 - SheetJS Excel export with populated achievement data.
 - Admin audit trail for governance actions.
+- Rule-based escalation module with automated email reminders and escalation logging.
 - Dark/light dashboard theme with persisted preference.
 
 ## Tech Stack
