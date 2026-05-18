@@ -39,6 +39,28 @@ function getStatusLabel(status: Goal['status']): string {
   }
 }
 
+function getUpdatedLabel(updatedAt: string): string {
+  const updatedDate = new Date(updatedAt);
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const startOfUpdatedDate = new Date(
+    updatedDate.getFullYear(),
+    updatedDate.getMonth(),
+    updatedDate.getDate()
+  ).getTime();
+  const daysAgo = Math.floor((startOfToday - startOfUpdatedDate) / (24 * 60 * 60 * 1000));
+
+  if (Number.isNaN(startOfUpdatedDate) || daysAgo <= 0) {
+    return 'Updated today';
+  }
+
+  if (daysAgo === 1) {
+    return 'Updated yesterday';
+  }
+
+  return `Updated ${daysAgo} days ago`;
+}
+
 export function GoalCard({
   goal,
   canEdit = false,
@@ -97,6 +119,9 @@ export function GoalCard({
             Linked to source goal
           </div>
         )}
+        <div className="border-t border-white/10 pt-2 text-xs text-white/50">
+          {getUpdatedLabel(goal.updated_at)}
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/components/profile-provider';
 import {
@@ -26,6 +27,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -50,13 +52,46 @@ import {
   Bell,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { UserRole } from '@/lib/types';
+import type { GoalSheetStatus, Profile, Quarter, UserRole } from '@/lib/types';
 
 interface NavItem {
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
   roles: UserRole[];
+}
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+}
+
+interface ActivityGoalSheetRow {
+  id: string;
+  employee_id: string;
+  status: GoalSheetStatus;
+  submitted_at: string | null;
+  approved_at: string | null;
+  return_comment: string | null;
+  updated_at: string;
+  employee?: Pick<Profile, 'name'> | null;
+}
+
+interface ActivityCheckinRow {
+  id: string;
+  goal_id: string;
+  quarter: Quarter;
+  manager_id: string;
+  created_at: string;
+}
+
+interface ActivityWindowRow {
+  id: string;
+  quarter: Exclude<Quarter, 'Annual'>;
+  is_open: boolean;
+  created_at: string;
 }
 
 const navItems: NavItem[] = [
@@ -149,12 +184,91 @@ function isNavItemActive(pathname: string, itemUrl: string) {
   return false;
 }
 
+function formatRelativeTime(value: string) {
+  const timestamp = new Date(value).getTime();
+  const diffMs = Date.now() - timestamp;
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+
+  if (Number.isNaN(timestamp)) {
+    return 'Just now';
+  }
+
+  if (diffMs < minute) {
+    return 'Just now';
+  }
+
+  if (diffMs < hour) {
+    const minutes = Math.floor(diffMs / minute);
+    return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+  }
+
+  if (diffMs < day) {
+    const hours = Math.floor(diffMs / hour);
+    return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  }
+
+  if (diffMs < day * 2) {
+    return 'Yesterday';
+  }
+
+  const days = Math.floor(diffMs / day);
+  return `${days} days ago`;
+}
+
+function sortNotifications(items: NotificationItem[]) {
+  return [...items]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5);
+}
+
+function mergeNotification(items: NotificationItem[], item: NotificationItem) {
+  return sortNotifications([item, ...items.filter((existing) => existing.id !== item.id)]);
+}
+
+function buildGoalSheetNotification(row: ActivityGoalSheetRow, fallbackName = 'Employee'): NotificationItem | null {
+  const employeeName = row.employee?.name ?? fallbackName;
+  const baseDescription = `${employeeName} · FY2025-26`;
+
+  if (row.status === 'submitted') {
+    return {
+      id: `sheet-submitted-${row.id}-${row.submitted_at ?? row.updated_at}`,
+      title: 'Sheet submitted',
+      description: baseDescription,
+      createdAt: row.submitted_at ?? row.updated_at,
+    };
+  }
+
+  if (row.status === 'approved') {
+    return {
+      id: `sheet-approved-${row.id}-${row.approved_at ?? row.updated_at}`,
+      title: 'Sheet approved',
+      description: baseDescription,
+      createdAt: row.approved_at ?? row.updated_at,
+    };
+  }
+
+  if (row.status === 'returned') {
+    return {
+      id: `sheet-returned-${row.id}-${row.updated_at}`,
+      title: 'Sheet returned',
+      description: row.return_comment ? `${baseDescription} · ${row.return_comment}` : baseDescription,
+      createdAt: row.updated_at,
+    };
+  }
+
+  return null;
+}
+
 export function AppSidebar() {
   const { profile } = useProfile();
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const storedTheme = window.localStorage.getItem('atomquest-theme');
@@ -163,6 +277,190 @@ export function AppSidebar() {
     document.documentElement.classList.toggle('dark', shouldUseDark);
     setIsDarkMode(shouldUseDark);
   }, []);
+
+  const addLiveNotification = useCallback((item: NotificationItem) => {
+    setNotifications((current) => mergeNotification(current, item));
+    setUnreadCount((current) => current + 1);
+  }, []);
+
+  useEffect(() => {
+    if (!profile) {
+      return;
+    }
+
+    const activeProfile = profile;
+    const browserSupabase = createClient();
+    let isMounted = true;
+
+    async function loadInitialNotifications() {
+      const reportIds: string[] = [];
+      const employeeNameById = new Map<string, string>();
+
+      if (activeProfile.role === 'employee') {
+        reportIds.push(activeProfile.id);
+        employeeNameById.set(activeProfile.id, activeProfile.name);
+      } else {
+        const { data: reports } = await browserSupabase
+          .from('profiles')
+          .select('id, name')
+          .eq(
+            activeProfile.role === 'admin' ? 'role' : 'manager_id',
+            activeProfile.role === 'admin' ? 'employee' : activeProfile.id
+          );
+
+        for (const report of (reports ?? []) as Pick<Profile, 'id' | 'name'>[]) {
+          reportIds.push(report.id);
+          employeeNameById.set(report.id, report.name);
+        }
+      }
+
+      const initialItems: NotificationItem[] = [];
+
+      if (reportIds.length > 0) {
+        const { data: sheets } = await browserSupabase
+          .from('goal_sheets')
+          .select('id, employee_id, status, submitted_at, approved_at, return_comment, updated_at, employee:profiles!goal_sheets_employee_id_fkey(name)')
+          .in('employee_id', reportIds)
+          .order('updated_at', { ascending: false })
+          .limit(8);
+
+        for (const sheet of (sheets ?? []) as unknown as ActivityGoalSheetRow[]) {
+          const item = buildGoalSheetNotification(sheet, employeeNameById.get(sheet.employee_id) ?? 'Employee');
+
+          if (item) {
+            initialItems.push(item);
+          }
+        }
+      }
+
+      const { data: windows } = await browserSupabase
+        .from('quarterly_windows')
+        .select('id, quarter, is_open, created_at')
+        .eq('is_open', true)
+        .order('created_at', { ascending: false })
+        .limit(2);
+
+      for (const windowRow of (windows ?? []) as ActivityWindowRow[]) {
+        initialItems.push({
+          id: `window-open-${windowRow.id}`,
+          title: `${windowRow.quarter} window opened`,
+          description: 'Achievement logging is available',
+          createdAt: windowRow.created_at,
+        });
+      }
+
+      if (activeProfile.role === 'manager' || activeProfile.role === 'admin') {
+        const { data: checkins } = await browserSupabase
+          .from('checkins')
+          .select('id, goal_id, quarter, manager_id, created_at')
+          .eq('manager_id', activeProfile.id)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        for (const checkin of (checkins ?? []) as ActivityCheckinRow[]) {
+          initialItems.push({
+            id: `checkin-${checkin.id}`,
+            title: 'Check-in added',
+            description: `${checkin.quarter} manager comment`,
+            createdAt: checkin.created_at,
+          });
+        }
+      }
+
+      if (isMounted) {
+        setNotifications(sortNotifications(initialItems));
+      }
+
+      const reportIdSet = new Set(reportIds);
+      const channel = browserSupabase
+        .channel(`atomquest-notifications-${activeProfile.id}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'goal_sheets' },
+          (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+            const sheet = payload.new as Partial<ActivityGoalSheetRow>;
+
+            if (!sheet.id || !sheet.employee_id || !sheet.status || !sheet.updated_at || !reportIdSet.has(sheet.employee_id)) {
+              return;
+            }
+
+            const item = buildGoalSheetNotification(
+              sheet as ActivityGoalSheetRow,
+              employeeNameById.get(sheet.employee_id) ?? 'Employee'
+            );
+
+            if (item) {
+              addLiveNotification(item);
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'checkins' },
+          async (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+            const checkin = payload.new as Partial<ActivityCheckinRow>;
+
+            if (!checkin.id || !checkin.goal_id || !checkin.quarter || !checkin.created_at) {
+              return;
+            }
+
+            const { data: goal } = await browserSupabase
+              .from('goals')
+              .select('sheet_id, goal_sheets!inner(employee_id)')
+              .eq('id', checkin.goal_id)
+              .single();
+            const goalSheet = goal as { goal_sheets?: { employee_id?: string } } | null;
+            const employeeId = goalSheet?.goal_sheets?.employee_id;
+
+            if (employeeId !== activeProfile.id && (!employeeId || !reportIdSet.has(employeeId))) {
+              return;
+            }
+
+            addLiveNotification({
+              id: `checkin-${checkin.id}`,
+              title: 'Check-in added',
+              description: `${checkin.quarter} manager comment`,
+              createdAt: checkin.created_at,
+            });
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'quarterly_windows' },
+          (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+            const windowRow = payload.new as Partial<ActivityWindowRow>;
+
+            if (!windowRow.id || !windowRow.quarter || !windowRow.created_at || !windowRow.is_open) {
+              return;
+            }
+
+            addLiveNotification({
+              id: `window-open-${windowRow.id}-${Date.now()}`,
+              title: `${windowRow.quarter} window opened`,
+              description: 'Achievement logging is available',
+              createdAt: new Date().toISOString(),
+            });
+          }
+        )
+        .subscribe();
+
+      return channel;
+    }
+
+    let notificationChannel: ReturnType<typeof browserSupabase.channel> | null = null;
+
+    void loadInitialNotifications().then((channel) => {
+      notificationChannel = channel ?? null;
+    });
+
+    return () => {
+      isMounted = false;
+
+      if (notificationChannel) {
+        void browserSupabase.removeChannel(notificationChannel);
+      }
+    };
+  }, [addLiveNotification, profile]);
 
   if (!profile) return null;
 
@@ -232,13 +530,42 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <div className="mb-2 flex items-center gap-2 px-1">
-          <button
-            type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white"
-            aria-label="Notifications"
-          >
-            <Bell className="h-4 w-4 animate-[bellBounce_1.8s_ease-in-out_infinite]" />
-          </button>
+          <DropdownMenu onOpenChange={(open) => open && setUnreadCount(0)}>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white"
+                aria-label="Notifications"
+              >
+                <Bell className="h-4 w-4 animate-[bellBounce_1.8s_ease-in-out_infinite]" />
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-500 px-1.5 text-[10px] font-bold leading-none text-white shadow-[0_0_12px_rgba(16,185,129,0.55)]">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-80">
+              <DropdownMenuLabel className="flex items-center justify-between">
+                <span>Activity</span>
+                <span className="text-[11px] font-normal text-muted-foreground">Latest 5</span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {notifications.length === 0 ? (
+                <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                  No recent activity yet.
+                </div>
+              ) : (
+                notifications.map((item) => (
+                  <DropdownMenuItem key={item.id} className="flex cursor-default flex-col items-start gap-1 py-3">
+                    <span className="text-sm font-semibold">{item.title}</span>
+                    <span className="line-clamp-2 text-xs text-muted-foreground">{item.description}</span>
+                    <span className="text-[11px] text-muted-foreground">{formatRelativeTime(item.createdAt)}</span>
+                  </DropdownMenuItem>
+                ))
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <button
             type="button"
             onClick={toggleDarkMode}

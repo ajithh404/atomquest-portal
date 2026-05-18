@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import type { Goal, GoalSheet, Profile } from '@/lib/types';
@@ -20,6 +21,34 @@ type SheetWithGoals = GoalSheet & {
 
 function jsonError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
+}
+
+async function sendApprovalEmail({
+  to,
+  subject,
+  text,
+}: {
+  to: string;
+  subject: string;
+  text: string;
+}) {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    return;
+  }
+
+  try {
+    const resend = new Resend(apiKey);
+    await resend.emails.send({
+      from: 'AtomQuest <onboarding@resend.dev>',
+      to,
+      subject,
+      text,
+    });
+  } catch (error) {
+    console.error('Approval email failed:', error);
+  }
 }
 
 async function getSessionProfile() {
@@ -104,6 +133,14 @@ export async function POST(request: NextRequest) {
       return jsonError(updateError.message);
     }
 
+    if (sheet.employee?.email) {
+      await sendApprovalEmail({
+        to: sheet.employee.email,
+        subject: 'Your goal sheet has been approved ✓',
+        text: `Hi ${sheet.employee.name}, your FY2025-26 goal sheet has been approved by your manager. Log in to AtomQuest to view your locked goals.`,
+      });
+    }
+
     return NextResponse.json({ ok: true });
   }
 
@@ -119,6 +156,14 @@ export async function POST(request: NextRequest) {
 
   if (returnError) {
     return jsonError(returnError.message);
+  }
+
+  if (sheet.employee?.email) {
+    await sendApprovalEmail({
+      to: sheet.employee.email,
+      subject: 'Your goal sheet needs revision',
+      text: `Hi ${sheet.employee.name}, your manager has returned your goal sheet with the following comment: ${parsed.data.returnComment}. Please log in to AtomQuest to review and resubmit.`,
+    });
   }
 
   return NextResponse.json({ ok: true });

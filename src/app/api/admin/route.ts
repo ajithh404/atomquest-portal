@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
-import type { GoalSheet, Profile } from '@/lib/types';
+import type { GoalSheet, Profile, QuarterlyWindow } from '@/lib/types';
 import { CURRENT_CYCLE_YEAR } from '@/lib/validations';
 
 const postgresUuidSchema = z
@@ -28,6 +29,31 @@ const adminPatchSchema = z.discriminatedUnion('action', [
 
 function jsonError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
+}
+
+async function sendWindowOpenEmails(window: QuarterlyWindow, employees: Profile[]) {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey || employees.length === 0) {
+    return;
+  }
+
+  try {
+    const resend = new Resend(apiKey);
+
+    await Promise.allSettled(
+      employees.map((employee) =>
+        resend.emails.send({
+          from: 'AtomQuest <onboarding@resend.dev>',
+          to: employee.email,
+          subject: `${window.quarter} achievement window is now open`,
+          text: `Hi ${employee.name}, the ${window.quarter} window is now open. Log in to AtomQuest to log your achievements before the window closes.`,
+        })
+      )
+    );
+  } catch (error) {
+    console.error('Window notification email failed:', error);
+  }
 }
 
 async function getSessionProfile() {
@@ -113,6 +139,16 @@ export async function PATCH(request: NextRequest) {
   }
 
   if (parsed.data.action === 'updateWindow') {
+    const { data: currentWindow, error: windowError } = await supabase
+      .from('quarterly_windows')
+      .select('*')
+      .eq('id', parsed.data.windowId)
+      .single();
+
+    if (windowError || !currentWindow) {
+      return jsonError(windowError?.message ?? 'Quarterly window was not found.', 404);
+    }
+
     const { error } = await supabase
       .from('quarterly_windows')
       .update({ is_open: parsed.data.isOpen })
@@ -120,6 +156,24 @@ export async function PATCH(request: NextRequest) {
 
     if (error) {
       return jsonError(error.message);
+    }
+
+    const windowOpened = parsed.data.isOpen && !(currentWindow as QuarterlyWindow).is_open;
+
+    if (windowOpened) {
+      const { data: employees, error: employeesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('role', 'employee');
+
+      if (employeesError) {
+        console.error('Unable to load employees for window email:', employeesError.message);
+      } else {
+        await sendWindowOpenEmails(
+          { ...(currentWindow as QuarterlyWindow), is_open: true },
+          (employees ?? []) as Profile[]
+        );
+      }
     }
 
     return NextResponse.json({ ok: true });
