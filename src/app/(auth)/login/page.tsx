@@ -70,27 +70,21 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* Logo and branding */}
-      <div className="text-center mb-8">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[20px] border border-white/10 bg-white/10 shadow-[0_12px_32px_rgba(5,150,105,0.22)] backdrop-blur-xl">
-          <Image src="/logo.png" width={40} height={40} alt="AtomQuest logo" className="h-10 w-10 rounded-xl bg-white object-cover" priority />
-        </div>
-        <h1 className="text-[28px] font-extrabold tracking-[-0.5px] text-white">
-          Atom<span className="text-emerald-400">Quest</span>
-        </h1>
-        <p className="mt-1 text-sm text-white/50">Every target. Every quarter.</p>
-      </div>
-
       {/* Login Card */}
-      <Card className="rounded-[20px] border border-white/10 bg-white/[0.06] shadow-[0_24px_80px_rgba(2,6,23,0.32)] backdrop-blur-2xl">
-        <CardHeader className="space-y-1 pb-5">
-          <CardTitle className="text-[22px] font-bold tracking-[-0.3px] text-white">Welcome back</CardTitle>
-          <CardDescription className="text-sm text-white/50">
+      <Card className="w-full rounded-[28px] border border-white/10 bg-white/[0.06] px-2 py-7 shadow-[0_28px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl sm:px-5">
+        <CardHeader className="items-center space-y-5 pb-6 text-center">
+          <div className="flex h-[86px] w-[86px] items-center justify-center rounded-[26px] border border-emerald-400/35 bg-emerald-400/10 shadow-[0_0_34px_rgba(16,185,129,0.24)]">
+            <Image src="/logo.png" width={56} height={56} alt="AtomQuest logo" className="h-14 w-14 rounded-2xl bg-white object-cover" priority />
+          </div>
+          <div>
+            <CardTitle className="text-[28px] font-extrabold tracking-[-0.5px] text-white">Welcome back</CardTitle>
+            <CardDescription className="mt-2 text-base text-white/56">
             Sign in to your account to continue
-          </CardDescription>
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+        <CardContent className="px-5 sm:px-7">
+          <form onSubmit={handleLogin} className="space-y-5">
             {error && (
               <div className="flex items-center gap-2 rounded-[10px] border border-red-400/20 bg-red-500/10 p-3 text-sm text-red-200">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -110,7 +104,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11 border-white/10 bg-white/10 text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
+                className="h-14 rounded-2xl border-white/10 bg-white/10 text-base text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
               />
             </div>
 
@@ -127,7 +121,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-11 border-white/10 bg-white/10 pr-10 text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
+                  className="h-14 rounded-2xl border-white/10 bg-white/10 pr-10 text-base text-white placeholder:text-white/35 focus:border-emerald-500 focus:ring-emerald-500/15"
                 />
                 <button
                   type="button"
@@ -143,7 +137,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="h-11 w-full bg-[#059669] font-semibold text-white shadow-[0_12px_28px_rgba(5,150,105,0.28)] transition-all duration-150 hover:bg-[#047857]"
+              className="mt-2 h-14 w-full rounded-2xl bg-[#059669] text-base font-bold text-white shadow-[0_16px_34px_rgba(5,150,105,0.32)] transition-all duration-150 hover:bg-[#047857]"
             >
               {isLoading ? (
                 <>
@@ -157,7 +151,7 @@ export default function LoginPage() {
           </form>
 
           {/* Demo credentials section */}
-          <div className="mt-6 pt-6 border-t border-white/10">
+          <div className="mt-8 border-t border-white/10 pt-6">
             <p className="mb-3 text-center text-xs text-white/40">Quick login with demo accounts</p>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -187,8 +181,8 @@ export default function LoginPage() {
       </Card>
 
       {/* Footer */}
-      <p className="mt-6 text-center text-xs text-white/35">
-        Atomberg Technologies &middot; AtomQuest Hackathon 1.0
+      <p className="mt-6 text-center text-sm text-white/44">
+        Your data is encrypted and secure
       </p>
     </>
   );

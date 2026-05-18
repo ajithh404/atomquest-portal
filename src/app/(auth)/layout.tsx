@@ -1,16 +1,124 @@
+import Image from 'next/image';
+import { Activity, ShieldCheck, Target } from 'lucide-react';
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="auth-shell relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0A0F1E] px-4 py-10">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(5,150,105,0.22),transparent_32rem),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.12),transparent_28rem),radial-gradient(circle_at_center,rgba(255,255,255,0.06),transparent_36rem)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:64px_64px]" />
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/[0.06] to-transparent" />
+    <div className="auth-shell relative min-h-screen overflow-hidden bg-[#07111F] px-5 py-8 text-white sm:px-8 lg:px-12">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_36%,rgba(5,150,105,0.24),transparent_28rem),radial-gradient(circle_at_74%_52%,rgba(16,185,129,0.12),transparent_26rem),radial-gradient(circle_at_top_left,rgba(37,99,235,0.13),transparent_34rem)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.027)_1px,transparent_1px)] bg-[size:56px_56px]" />
+      <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-white/[0.05] to-transparent" />
+      <div className="absolute bottom-[-18rem] left-1/4 h-[34rem] w-[34rem] rounded-full bg-emerald-500/10 blur-3xl" />
 
-      <div className="relative z-10 w-full max-w-md">
-        {children}
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+        <section className="hidden min-h-[760px] flex-col justify-between py-8 lg:flex">
+          <div>
+            <div className="mb-12 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/45 bg-emerald-400/10 shadow-[0_0_28px_rgba(16,185,129,0.28)]">
+                <Image src="/logo.png" width={28} height={28} alt="AtomQuest logo" className="h-7 w-7 rounded-lg object-cover" priority />
+              </div>
+              <div className="text-2xl font-extrabold tracking-[-0.5px]">
+                Atom<span className="text-emerald-400">Quest</span>
+              </div>
+            </div>
+
+            <h1 className="max-w-xl text-[52px] font-extrabold leading-[1.12] tracking-[-1px] text-white xl:text-[58px]">
+              Every <span className="text-emerald-400">target</span>.<br />
+              Every <span className="text-emerald-400">quarter</span>.
+            </h1>
+            <p className="mt-6 max-w-lg text-lg leading-8 text-white/58">
+              AtomQuest helps teams set goals, track progress, and achieve more — together.
+            </p>
+
+            <div className="auth-dashboard-preview mt-10">
+              <div className="auth-preview-sidebar">
+                <div className="mb-5 flex items-center gap-2 text-xs font-bold text-white">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-300">AQ</div>
+                  AtomQuest
+                </div>
+                {['Dashboard', 'Goals', 'Achievements', 'Reviews', 'Reports'].map((item, index) => (
+                  <div key={item} className={index === 0 ? 'auth-preview-nav active' : 'auth-preview-nav'}>
+                    <span className="h-3 w-3 rounded-sm border border-current/50" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <div className="flex-1 p-5">
+                <div className="mb-5 text-sm font-bold text-white">Dashboard</div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    ['Total Goals', '128', '+12.5%'],
+                    ['Completed', '96', '+8.3%'],
+                    ['In Progress', '24', '-4.2%'],
+                  ].map(([label, value, trend]) => (
+                    <div key={label} className="rounded-xl border border-white/10 bg-white/[0.045] p-4 shadow-[0_12px_28px_rgba(2,6,23,0.16)]">
+                      <div className="text-[11px] font-medium text-white/50">{label}</div>
+                      <div className="mt-2 text-2xl font-bold text-white">{value}</div>
+                      <div className={trend.startsWith('+') ? 'mt-1 text-[11px] font-bold text-emerald-400' : 'mt-1 text-[11px] font-bold text-red-400'}>
+                        {trend}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] p-5">
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="text-sm font-bold text-white">Goal Progress</span>
+                    <span className="text-[11px] text-white/45">Last 7 days</span>
+                  </div>
+                  <div className="auth-chart">
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="grid grid-cols-3 gap-6">
+              {[
+                {
+                  title: 'Aligned Goals',
+                  copy: 'Connect strategy to\neveryday executions',
+                  icon: Target,
+                },
+                {
+                  title: 'Live Insights',
+                  copy: 'Track real progress\nin real time.',
+                  icon: Activity,
+                },
+                {
+                  title: 'Accountability',
+                  copy: 'Drive ownership and\ndeliver outcomes.',
+                  icon: ShieldCheck,
+                },
+              ].map((feature) => (
+                <div key={feature.title} className="flex gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/10 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.18)]">
+                    <feature.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-white">{feature.title}</div>
+                    <p className="mt-1 whitespace-pre-line text-sm leading-5 text-white/54">{feature.copy}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-9 text-center text-xs text-white/34">
+              © 2026 Atomberg Technologies Pvt. Ltd. All rights reserved.
+            </p>
+          </div>
+        </section>
+
+        <section className="mx-auto flex w-full max-w-[480px] items-center justify-center lg:justify-end">
+          {children}
+        </section>
       </div>
     </div>
   );

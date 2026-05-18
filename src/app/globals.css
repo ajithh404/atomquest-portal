@@ -807,6 +807,120 @@
   html:not(.dark) .auth-shell [class*="text-emerald"] {
     color: #34d399 !important;
   }
+
+  .auth-dashboard-preview {
+    position: relative;
+    display: flex;
+    min-height: 330px;
+    max-width: 680px;
+    overflow: hidden;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: 26px;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+      rgba(2, 6, 23, 0.76);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.055) inset,
+      0 0 44px rgba(16, 185, 129, 0.24),
+      0 28px 70px rgba(2, 6, 23, 0.44);
+    transform: perspective(1000px) rotateX(5deg) rotateY(-7deg) rotateZ(1deg);
+    transform-origin: left center;
+    backdrop-filter: blur(18px);
+  }
+
+  .auth-dashboard-preview::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 75% 15%, rgba(16, 185, 129, 0.22), transparent 20rem);
+  }
+
+  .auth-preview-sidebar {
+    position: relative;
+    z-index: 1;
+    width: 160px;
+    flex-shrink: 0;
+    padding: 22px 16px;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(2, 6, 23, 0.58);
+  }
+
+  .auth-preview-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    padding: 10px 11px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .auth-preview-nav.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.95), rgba(16, 185, 129, 0.55));
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.22);
+  }
+
+  .auth-chart {
+    position: relative;
+    height: 116px;
+    overflow: hidden;
+    border-radius: 16px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 100% 29px, 70px 100%;
+  }
+
+  .auth-chart::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 50px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #10b981, #059669, #34d399);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.58);
+    transform: skewY(-10deg);
+  }
+
+  .auth-chart span {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: #10b981;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.72);
+  }
+
+  .auth-chart span:nth-child(1) {
+    left: 12%;
+    top: 58%;
+  }
+
+  .auth-chart span:nth-child(2) {
+    left: 30%;
+    top: 45%;
+  }
+
+  .auth-chart span:nth-child(3) {
+    left: 50%;
+    top: 38%;
+  }
+
+  .auth-chart span:nth-child(4) {
+    left: 70%;
+    top: 30%;
+  }
+
+  .auth-chart span:nth-child(5) {
+    left: 88%;
+    top: 24%;
+  }
 }
 
 @keyframes fadeIn {
