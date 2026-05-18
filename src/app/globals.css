@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 216 33% 96%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --background: 216 28% 7%;
+    --foreground: 210 40% 98%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
     --primary: 161 94% 30%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 138 76% 97%;
-    --secondary-foreground: 161 94% 30%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 138 76% 97%;
-    --accent-foreground: 161 94% 30%;
+    --secondary: 216 22% 13%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 216 22% 13%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 161 94% 30%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 214 32% 91%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
     --ring: 161 94% 30%;
     --radius: 10px;
     --chart-1: 160 84% 39%;
@@ -74,7 +74,7 @@
   }
 
   html {
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: Manrope, sans-serif;
   }
 
   body {
@@ -86,7 +86,7 @@
   }
 
   h1 {
-    color: #0f172a;
+    color: #fff;
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -94,7 +94,7 @@
   }
 
   h2 {
-    color: #0f172a;
+    color: #fff;
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -102,7 +102,7 @@
   }
 
   h3 {
-    color: #0f172a;
+    color: #fff;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.25;
@@ -115,13 +115,13 @@
   }
 
   small {
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.45);
     font-size: 12px;
     font-weight: 400;
   }
 
   label {
-    color: #374151;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 13px;
     font-weight: 500;
   }
@@ -142,7 +142,7 @@
     min-width: 260px !important;
     background: rgba(10, 15, 30, 0.95) !important;
     color: hsl(var(--sidebar-foreground));
-    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-right: 1px solid rgba(5, 150, 105, 0.2) !important;
     border-left: 0 !important;
     border-top: 0 !important;
     border-bottom: 0 !important;
@@ -214,12 +214,12 @@
 
   main,
   [data-sidebar="inset"] {
-    background: #f1f4f8;
+    background: #0d1117;
   }
 
   .dark main,
   .dark [data-sidebar="inset"] {
-    background: #0f172a;
+    background: #0d1117;
   }
 
   main {
@@ -227,8 +227,8 @@
   }
 
   header.sticky {
-    border-color: #e5e7eb;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 0 rgba(5, 150, 105, 0.08);
   }
 
   .dark header.sticky {
@@ -238,18 +238,19 @@
   .card,
   .rounded-xl.border.bg-card,
   [class*="rounded-xl"][class*="border"][class*="bg-card"] {
-    background: rgba(255, 255, 255, 0.85) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 16px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.04) !important;
-    backdrop-filter: blur(8px);
+    color: #fff;
+    box-shadow: 0 16px 40px rgba(2, 6, 23, 0.22), 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px);
     transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background-color 200ms ease;
   }
 
   .dark .card,
   .dark .rounded-xl.border.bg-card,
   .dark [class*="rounded-xl"][class*="border"][class*="bg-card"] {
-    background: rgba(30, 41, 59, 0.8) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
@@ -257,7 +258,8 @@
   .rounded-xl.border.bg-card:hover,
   [class*="rounded-xl"][class*="border"][class*="bg-card"]:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(5, 150, 105, 0.4) !important;
+    box-shadow: 0 0 20px rgba(5, 150, 105, 0.1), 0 18px 42px rgba(2, 6, 23, 0.28) !important;
   }
 
   [role="dialog"] {
@@ -288,14 +290,14 @@
   }
 
   button[class*="border"][class*="bg-background"] {
-    border: 1.5px solid #059669;
-    color: #059669;
-    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
     font-weight: 600;
   }
 
   button[class*="border"][class*="bg-background"]:hover {
-    background: #f0fdf4;
+    background: rgba(255, 255, 255, 0.12);
   }
 
   button.bg-destructive,
@@ -323,9 +325,10 @@
   textarea,
   select,
   [role="combobox"] {
-    background: #fff;
-    border: 1.5px solid #e2e8f0 !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 10px !important;
+    color: #fff !important;
     transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
   }
 
@@ -333,13 +336,14 @@
   .dark textarea,
   .dark select,
   .dark [role="combobox"] {
-    background: rgba(15, 23, 42, 0.55);
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
   }
 
   input::placeholder,
   textarea::placeholder {
     color: #94a3b8;
+    color: rgba(255, 255, 255, 0.35);
   }
 
   input:focus,
@@ -359,7 +363,7 @@
   }
 
   thead tr {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .dark thead tr {
@@ -367,12 +371,13 @@
   }
 
   tbody tr {
-    border-bottom: 1px solid #e5e7eb;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     transition: background-color 150ms ease;
   }
 
   tbody tr:hover {
-    background: #f1f4f8;
+    background: rgba(5, 150, 105, 0.08);
   }
 
   .dark tbody tr:hover {
@@ -453,6 +458,101 @@
     color: #fca5a5;
   }
 
+  button.inline-flex.bg-primary,
+  button.inline-flex[class*="bg-primary"] {
+    background: #059669 !important;
+    color: #fff !important;
+  }
+
+  button.inline-flex.bg-primary:hover,
+  button.inline-flex[class*="bg-primary"]:hover {
+    background: #047857 !important;
+  }
+
+  button.inline-flex.bg-secondary,
+  button.inline-flex[class*="bg-secondary"] {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  button.inline-flex.bg-secondary:hover,
+  button.inline-flex[class*="bg-secondary"]:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  main {
+    color: #fff;
+  }
+
+  main p,
+  main span,
+  main td,
+  main li {
+    color: inherit;
+  }
+
+  main [class*="text-muted-foreground"],
+  main [class*="text-slate-500"],
+  main [class*="text-slate-600"],
+  main [class*="text-gray-500"],
+  main [class*="text-gray-600"],
+  main [class*="text-zinc-500"] {
+    color: rgba(255, 255, 255, 0.55) !important;
+  }
+
+  main [class*="text-slate-900"],
+  main [class*="text-gray-900"],
+  main [class*="text-zinc-900"],
+  main [class*="text-foreground"] {
+    color: #fff !important;
+  }
+
+  main [class*="text-3xl"],
+  main [class*="text-4xl"] {
+    color: #fff !important;
+    font-weight: 700;
+  }
+
+  main h2,
+  main h3 {
+    position: relative;
+    padding-bottom: 8px;
+  }
+
+  main h2::after,
+  main h3::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 42px;
+    height: 2px;
+    border-radius: 999px;
+    background: #059669;
+  }
+
+  main th {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.45) !important;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  main [class*="bg-white"],
+  main [class*="bg-background"],
+  main [class*="bg-card"] {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  main [class*="border-gray"],
+  main [class*="border-slate"],
+  main [class*="border-border"] {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
   [data-sonner-toast] {
     border-left: 4px solid #10b981 !important;
     animation: toastSlideIn 220ms ease both;
@@ -460,7 +560,16 @@
 
   .recharts-line-curve {
     stroke: #10b981 !important;
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
     transition: stroke 200ms ease;
+  }
+
+  .recharts-cartesian-grid line {
+    stroke: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .recharts-cartesian-axis-tick-value {
+    fill: rgba(255, 255, 255, 0.45) !important;
   }
 
   .recharts-bar-rectangle path {
@@ -469,10 +578,10 @@
   }
 
   .recharts-default-tooltip {
-    background: rgba(255, 255, 255, 0.94) !important;
-    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(5, 150, 105, 0.4) !important;
     border-radius: 16px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 0 20px rgba(5, 150, 105, 0.12), 0 8px 24px rgba(0, 0, 0, 0.28) !important;
     backdrop-filter: blur(8px);
   }
 

@@ -70,7 +70,7 @@ const config: Config = {
   		},
   		fontFamily: {
   			sans: [
-  				'Plus Jakarta Sans',
+  				'Manrope',
   				'sans-serif'
   			]
   		},
