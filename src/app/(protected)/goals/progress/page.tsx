@@ -234,7 +234,11 @@ export default function ProgressPage() {
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
                               <h3 className="font-medium">{goal.title}</h3>
-                              {goal.is_shared && <Badge variant="outline">Shared</Badge>}
+                              {goal.is_shared && (
+                                <Badge variant="outline" className="border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/40 dark:bg-blue-500/20 dark:text-blue-100">
+                                  Shared
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-sm text-white/50">
                               {goal.thrust_area?.name ?? 'Thrust Area'} · {getTargetLabel(goal)}

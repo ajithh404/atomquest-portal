@@ -26,7 +26,9 @@ export function CheckinHistory({ checkins }: CheckinHistoryProps) {
           </div>
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{checkin.quarter}</Badge>
+              <Badge variant="outline" className="border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/40 dark:bg-emerald-500/20 dark:text-emerald-100">
+                {checkin.quarter}
+              </Badge>
               <span className="text-xs text-white/50">
                 {new Date(checkin.created_at).toLocaleString()}
               </span>

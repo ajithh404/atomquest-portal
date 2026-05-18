@@ -130,7 +130,9 @@ export default function AuditPage() {
                       <td className="px-3 py-2">{new Date(row.timestamp).toLocaleString()}</td>
                       <td className="px-3 py-2">{row.user}</td>
                       <td className="px-3 py-2">
-                        <Badge variant="outline">{row.action}</Badge>
+                        <Badge variant="outline" className="border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/40 dark:bg-emerald-500/20 dark:text-emerald-100">
+                          {row.action}
+                        </Badge>
                       </td>
                       <td className="px-3 py-2">{row.tableName}</td>
                       <td className="max-w-xs truncate px-3 py-2" title={row.oldValue}>

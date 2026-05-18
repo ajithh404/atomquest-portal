@@ -196,7 +196,11 @@ export default function CheckinsPage() {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <CardTitle className="text-base">{goal.title}</CardTitle>
-                        {goal.is_shared && <Badge variant="outline">Shared</Badge>}
+                        {goal.is_shared && (
+                          <Badge variant="outline" className="border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/40 dark:bg-blue-500/20 dark:text-blue-100">
+                            Shared
+                          </Badge>
+                        )}
                       </div>
                       <CardDescription>
                         {goal.thrust_area?.name ?? 'Thrust Area'} · {getTargetLabel(goal)}

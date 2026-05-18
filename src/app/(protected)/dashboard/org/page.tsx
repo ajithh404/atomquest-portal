@@ -122,7 +122,14 @@ export default function OrgPage() {
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-medium">{profile.name}</h3>
-                      <Badge variant={profile.role === 'admin' ? 'default' : profile.role === 'manager' ? 'secondary' : 'outline'}>
+                      <Badge
+                        variant={profile.role === 'admin' ? 'default' : profile.role === 'manager' ? 'secondary' : 'outline'}
+                        className={
+                          profile.role === 'employee'
+                            ? 'border-green-200 bg-green-100 text-green-800 dark:border-emerald-400/40 dark:bg-emerald-500/20 dark:text-emerald-100'
+                            : undefined
+                        }
+                      >
                         {profile.role}
                       </Badge>
                     </div>
