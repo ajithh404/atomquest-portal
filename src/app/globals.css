@@ -741,6 +741,56 @@
   html:not(.dark) button.inline-flex[class*="bg-secondary"]:hover {
     background: #f0fdf4 !important;
   }
+
+  html:not(.dark) main [class*="text-muted-foreground"],
+  html:not(.dark) main [class*="text-slate-500"],
+  html:not(.dark) main [class*="text-slate-600"],
+  html:not(.dark) main [class*="text-gray-500"],
+  html:not(.dark) main [class*="text-gray-600"],
+  html:not(.dark) main [class*="text-zinc-500"] {
+    color: #64748b !important;
+  }
+
+  html:not(.dark) main [class*="text-slate-900"],
+  html:not(.dark) main [class*="text-gray-900"],
+  html:not(.dark) main [class*="text-zinc-900"],
+  html:not(.dark) main [class*="text-foreground"] {
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) main [class*="text-3xl"],
+  html:not(.dark) main [class*="text-4xl"] {
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) .auth-shell,
+  html:not(.dark) .auth-shell h1,
+  html:not(.dark) .auth-shell h2,
+  html:not(.dark) .auth-shell h3,
+  html:not(.dark) .auth-shell label,
+  html:not(.dark) .auth-shell p,
+  html:not(.dark) .auth-shell span,
+  html:not(.dark) .auth-shell [class*="text-white"],
+  html:not(.dark) .auth-shell [class*="text-muted-foreground"] {
+    color: rgba(255, 255, 255, 0.86) !important;
+  }
+
+  html:not(.dark) .auth-shell [class*="text-white/50"],
+  html:not(.dark) .auth-shell [class*="text-white/45"],
+  html:not(.dark) .auth-shell [class*="text-white/40"],
+  html:not(.dark) .auth-shell [class*="text-white/35"] {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  html:not(.dark) .auth-shell input {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+  }
+
+  html:not(.dark) .auth-shell input::placeholder {
+    color: rgba(255, 255, 255, 0.35) !important;
+  }
 }
 
 @keyframes fadeIn {
