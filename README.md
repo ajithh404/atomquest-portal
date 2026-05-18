@@ -1,10 +1,10 @@
 # AtomQuest — Goal Setting & Tracking Portal
 
-AtomQuest is an in-house goal setting, approval, achievement tracking, and governance portal built for Atomberg Technologies' AtomQuest Hackathon 1.0.
+AtomQuest is an in-house goal setting, approval, achievement tracking, and governance portal built for Atomberg Technologies' AtomQuest Hackathon 1.0. It packages the full employee, manager, and admin journey into a polished, submission-ready SaaS experience.
 
 ## Live Submission
 
-- Live Vercel URL: https://atomquest-portal.vercel.app
+- Live Vercel URL: https://atomquest-portal-beta.vercel.app/
 - GitHub repository: https://github.com/ajithh404/atomquest-portal
 - Monthly operating cost: $0 using free-tier Vercel, Supabase, and Resend limits.
 
@@ -43,13 +43,14 @@ The Supabase migration seeds a complete FY2025-26 journey:
 - Progress score calculations for min, max, zero, and timeline UoM types.
 - Manager check-ins and comment history per goal.
 - Admin reports, completion dashboard, XLSX export, and searchable audit logs.
+- Admin escalation console for overdue submissions, stale approvals, missing progress activity, and reminder logs.
 - Responsive sidebar, notification bell, and polished AtomQuest login experience.
 
 ## Bonus Features
 
 - Realtime notification bell for submitted, approved, returned, check-in, and window-open activity.
 - Resend email notifications for approvals, returns, and opened quarterly windows.
-- Recharts analytics for progress trends and department completion rates.
+- Recharts analytics for progress trends, department completion, thrust-area distribution, and UoM mix.
 - SheetJS Excel export with populated achievement data.
 - Admin audit trail for governance actions.
 - Dark/light dashboard theme with persisted preference.
@@ -159,7 +160,7 @@ src/app/(protected)/goals         Employee goal sheets
 src/app/(protected)/goals/progress Achievement tracking
 src/app/(protected)/team          Manager review workflows
 src/app/(protected)/team/checkins Manager check-ins
-src/app/(protected)/dashboard     Admin dashboard
+src/app/(protected)/dashboard     Admin dashboard, analytics, reports, audit, escalations
 src/app/api                       Server routes for goals, approvals, admin, reports
 src/components                    Shared UI, sidebar, goal, check-in, report components
 src/lib                           Supabase clients, types, scoring, validations

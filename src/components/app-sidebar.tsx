@@ -50,6 +50,7 @@ import {
   Moon,
   Sun,
   Bell,
+  AlertTriangle,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { GoalSheetStatus, Profile, Quarter, UserRole } from '@/lib/types';
@@ -103,6 +104,7 @@ const navItems: NavItem[] = [
   { title: 'Cycle Management', url: '/dashboard/cycles', icon: CalendarDays, roles: ['admin'] },
   { title: 'Reports', url: '/dashboard/reports', icon: FileText, roles: ['admin'] },
   { title: 'Audit Log', url: '/dashboard/audit', icon: Search, roles: ['admin'] },
+  { title: 'Escalations', url: '/dashboard/escalations', icon: AlertTriangle, roles: ['admin'] },
   // Manager section
   { title: 'Team Goals', url: '/team', icon: Users, roles: ['manager', 'admin'] },
   { title: 'Check-ins', url: '/team/checkins', icon: MessageSquare, roles: ['manager', 'admin'] },

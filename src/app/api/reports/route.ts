@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import type { Achievement, AuditLog, Checkin, Goal, GoalSheet, Profile, QuarterlyWindow, ThrustArea } from '@/lib/types';
+import type { Achievement, AuditLog, Checkin, Goal, GoalSheet, Profile, QuarterlyWindow, ThrustArea, UomType } from '@/lib/types';
 import { CURRENT_CYCLE_YEAR } from '@/lib/validations';
 
 type AchievementGoalRow = Achievement & {
@@ -18,7 +18,7 @@ type AuditRow = AuditLog & {
 
 type SheetRow = GoalSheet & {
   employee: Profile | null;
-  goals?: Goal[];
+  goals?: (Goal & { thrust_area: ThrustArea | null })[];
 };
 
 type CheckinRow = Checkin & {
@@ -72,6 +72,26 @@ export interface DepartmentAggregate {
 export interface QuarterTrend {
   quarter: string;
   averageScore: number;
+}
+
+export interface ThrustAreaDistribution {
+  name: string;
+  count: number;
+  percentage: number;
+}
+
+export interface UomDistribution {
+  type: UomType;
+  label: string;
+  count: number;
+}
+
+export interface ManagerEffectivenessRow {
+  managerName: string;
+  directReports: number;
+  sheetsApproved: number;
+  avgDaysToApprove: number;
+  checkinCompletionRate: number;
 }
 
 function jsonError(message: string, status = 400) {
@@ -165,7 +185,7 @@ export async function GET() {
       supabase.from('profiles').select('*'),
       supabase
         .from('goal_sheets')
-        .select('*, employee:profiles!goal_sheets_employee_id_fkey(*), goals(*)')
+        .select('*, employee:profiles!goal_sheets_employee_id_fkey(*), goals(*, thrust_area:thrust_areas(*))')
         .eq('cycle_year', CURRENT_CYCLE_YEAR),
       supabase
         .from('achievements')
@@ -217,6 +237,7 @@ export async function GET() {
       checkins.filter((checkin) => checkin.quarter === currentQuarter).map((checkin) => checkin.goal_id)
     );
     const pendingCheckins = approvedGoals.filter((goal) => !currentQuarterCheckinGoalIds.has(goal.id)).length;
+    const allGoals = sheets.flatMap((sheet) => sheet.goals ?? []);
 
     const reportRows: AchievementReportRow[] = achievements.map((achievement) => {
       const goal = achievement.goals;
@@ -279,6 +300,70 @@ export async function GET() {
       };
     });
 
+    const thrustCounts = new Map<string, number>();
+
+    for (const goal of allGoals) {
+      const thrustAreaName = goal.thrust_area?.name ?? 'Unassigned';
+      thrustCounts.set(thrustAreaName, (thrustCounts.get(thrustAreaName) ?? 0) + 1);
+    }
+
+    const totalGoals = allGoals.length;
+    const thrustAreaDistribution: ThrustAreaDistribution[] = Array.from(thrustCounts.entries())
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: totalGoals === 0 ? 0 : Math.round((count / totalGoals) * 100),
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    const uomLabels: Record<UomType, string> = {
+      min: 'Minimum',
+      max: 'Maximum',
+      timeline: 'Timeline',
+      zero: 'Zero tolerance',
+    };
+
+    const uomDistribution: UomDistribution[] = (Object.keys(uomLabels) as UomType[]).map((type) => ({
+      type,
+      label: uomLabels[type],
+      count: allGoals.filter((goal) => goal.uom_type === type).length,
+    }));
+
+    const managerEffectiveness: ManagerEffectivenessRow[] = managers.map((manager) => {
+      const directReports = employees.filter((employee) => employee.manager_id === manager.id);
+      const directReportIds = new Set(directReports.map((employee) => employee.id));
+      const directReportSheets = sheets.filter((sheet) => directReportIds.has(sheet.employee_id));
+      const approvedDirectReportSheets = directReportSheets.filter((sheet) => sheet.status === 'approved');
+      const approvalDurations = approvedDirectReportSheets
+        .filter((sheet) => sheet.submitted_at && sheet.approved_at)
+        .map((sheet) =>
+          Math.max(
+            0,
+            (new Date(sheet.approved_at as string).getTime() - new Date(sheet.submitted_at as string).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        );
+      const directReportApprovedGoals = approvedDirectReportSheets.flatMap((sheet) => sheet.goals ?? []);
+      const directReportApprovedGoalIds = new Set(directReportApprovedGoals.map((goal) => goal.id));
+      const managerCurrentQuarterCheckins = checkins.filter(
+        (checkin) => checkin.quarter === currentQuarter && checkin.manager_id === manager.id && directReportApprovedGoalIds.has(checkin.goal_id)
+      );
+
+      return {
+        managerName: manager.name,
+        directReports: directReports.length,
+        sheetsApproved: approvedDirectReportSheets.length,
+        avgDaysToApprove:
+          approvalDurations.length === 0
+            ? 0
+            : Number((approvalDurations.reduce((sum, value) => sum + value, 0) / approvalDurations.length).toFixed(1)),
+        checkinCompletionRate:
+          directReportApprovedGoals.length === 0
+            ? 0
+            : Math.round((managerCurrentQuarterCheckins.length / directReportApprovedGoals.length) * 100),
+      };
+    });
+
     const dashboardStats: DashboardStats = {
       totalEmployees: employees.length,
       sheetsSubmitted: submittedOrApprovedSheets.length,
@@ -296,6 +381,9 @@ export async function GET() {
       dashboardStats,
       departmentAggregates,
       quarterTrends,
+      thrustAreaDistribution,
+      uomDistribution,
+      managerEffectiveness,
       currentQuarter,
     });
   } catch (error) {

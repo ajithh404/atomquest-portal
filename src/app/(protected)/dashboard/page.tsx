@@ -6,8 +6,11 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Line,
   LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -47,10 +50,33 @@ interface QuarterTrend {
   averageScore: number;
 }
 
+interface ThrustAreaDistribution {
+  name: string;
+  count: number;
+  percentage: number;
+}
+
+interface UomDistribution {
+  type: string;
+  label: string;
+  count: number;
+}
+
+interface ManagerEffectivenessRow {
+  managerName: string;
+  directReports: number;
+  sheetsApproved: number;
+  avgDaysToApprove: number;
+  checkinCompletionRate: number;
+}
+
 interface ReportsResponse {
   dashboardStats: DashboardStats;
   departmentAggregates: DepartmentAggregate[];
   quarterTrends: QuarterTrend[];
+  thrustAreaDistribution: ThrustAreaDistribution[];
+  uomDistribution: UomDistribution[];
+  managerEffectiveness: ManagerEffectivenessRow[];
   currentQuarter: string;
 }
 
@@ -64,10 +90,35 @@ function formatTooltipPercent(value: unknown, label: string): [string, string] {
   return [`${numericValue}%`, label];
 }
 
+function formatTooltipCount(value: unknown, label: string): [string, string] {
+  const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
+  return [String(numericValue), label];
+}
+
+function renderPieLabel(entry: unknown) {
+  const item = entry as { name?: string; percentage?: number };
+  return `${item.name ?? 'Area'} ${item.percentage ?? 0}%`;
+}
+
+function completionClassName(value: number) {
+  if (value >= 80) {
+    return 'border-emerald-400/50 bg-emerald-500/15 text-emerald-300';
+  }
+
+  if (value >= 50) {
+    return 'border-amber-400/50 bg-amber-500/15 text-amber-300';
+  }
+
+  return 'border-red-400/50 bg-red-500/15 text-red-300';
+}
+
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [departmentAggregates, setDepartmentAggregates] = useState<DepartmentAggregate[]>([]);
   const [quarterTrends, setQuarterTrends] = useState<QuarterTrend[]>([]);
+  const [thrustAreaDistribution, setThrustAreaDistribution] = useState<ThrustAreaDistribution[]>([]);
+  const [uomDistribution, setUomDistribution] = useState<UomDistribution[]>([]);
+  const [managerEffectiveness, setManagerEffectiveness] = useState<ManagerEffectivenessRow[]>([]);
   const [currentQuarter, setCurrentQuarter] = useState('Q1');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -85,6 +136,9 @@ export default function DashboardPage() {
       setStats(data.dashboardStats);
       setDepartmentAggregates(data.departmentAggregates);
       setQuarterTrends(data.quarterTrends);
+      setThrustAreaDistribution(data.thrustAreaDistribution);
+      setUomDistribution(data.uomDistribution);
+      setManagerEffectiveness(data.managerEffectiveness);
       setCurrentQuarter(data.currentQuarter);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Unable to load dashboard.');
@@ -158,6 +212,7 @@ export default function DashboardPage() {
       className: 'text-emerald-400',
     },
   ];
+  const chartColors = ['#10B981', '#059669', '#14B8A6', '#2DD4BF', '#34D399', '#0F766E'];
 
   return (
     <div className="page-shell space-y-6">
@@ -193,11 +248,21 @@ export default function DashboardPage() {
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={quarterTrends} margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="quarter" />
-                <YAxis domain={[0, 100]} tickFormatter={(value: number) => `${value}%`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="quarter" stroke="rgba(255,255,255,0.45)" />
+                <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.45)" tickFormatter={(value: number) => `${value}%`} />
                 <Tooltip formatter={(value) => formatTooltipPercent(value, 'Average score')} />
-                <Line type="monotone" dataKey="averageScore" stroke="#2563eb" strokeWidth={2} dot={{ r: 4 }} />
+                <Line
+                  type="monotone"
+                  dataKey="averageScore"
+                  stroke="#10B981"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: '#10B981' }}
+                  isAnimationActive
+                  animationDuration={900}
+                  animationEasing="ease-out"
+                  style={{ filter: 'drop-shadow(0 0 6px rgba(16,185,129,0.6))' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -211,16 +276,123 @@ export default function DashboardPage() {
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={departmentAggregates} margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="department" />
-                <YAxis domain={[0, 100]} tickFormatter={(value: number) => `${value}%`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="department" stroke="rgba(255,255,255,0.45)" />
+                <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.45)" tickFormatter={(value: number) => `${value}%`} />
                 <Tooltip formatter={(value) => formatTooltipPercent(value, 'Completion rate')} />
-                <Bar dataKey="completionRate" fill="#059669" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="completionRate" fill="#059669" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={900} animationEasing="ease-out" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Goal Distribution By Thrust Area</CardTitle>
+            <CardDescription>Share of active cycle goals across strategic thrust areas.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-96">
+            {thrustAreaDistribution.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center text-center">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
+                  <LayoutDashboard className="h-5 w-5" />
+                </div>
+                <p className="font-semibold text-white">No goals to chart yet</p>
+                <p className="mt-1 text-sm text-white/45">Create or approve goal sheets to populate this distribution.</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Tooltip formatter={(value) => formatTooltipCount(value, 'Goals')} />
+                  <Pie
+                    data={thrustAreaDistribution}
+                    dataKey="count"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={58}
+                    outerRadius={104}
+                    paddingAngle={2}
+                    labelLine={false}
+                    label={renderPieLabel}
+                    isAnimationActive
+                    animationDuration={900}
+                    animationEasing="ease-out"
+                  >
+                    {thrustAreaDistribution.map((entry, index) => (
+                      <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Goal Distribution By UoM Type</CardTitle>
+            <CardDescription>How teams define measurable success across goal formats.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={uomDistribution} margin={{ top: 12, right: 20, bottom: 8, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="label" stroke="rgba(255,255,255,0.45)" />
+                <YAxis allowDecimals={false} stroke="rgba(255,255,255,0.45)" />
+                <Tooltip formatter={(value) => formatTooltipCount(value, 'Goals')} />
+                <Bar dataKey="count" fill="#10B981" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={900} animationEasing="ease-out" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Manager Effectiveness</CardTitle>
+          <CardDescription>Approval velocity and check-in completion for direct-report teams.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {managerEffectiveness.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-10 text-center">
+              <h3 className="text-base font-semibold text-white">No manager data yet</h3>
+              <p className="mt-1 text-sm text-white/45">Assign employees to managers to populate this governance view.</p>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-2xl border border-white/10">
+              <table className="w-full min-w-[760px] text-sm">
+                <thead className="bg-white/[0.04] text-[11px] uppercase tracking-wider text-white/45">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-semibold">Manager Name</th>
+                    <th className="px-4 py-3 text-left font-semibold">Direct Reports</th>
+                    <th className="px-4 py-3 text-left font-semibold">Sheets Approved</th>
+                    <th className="px-4 py-3 text-left font-semibold">Avg Days To Approve</th>
+                    <th className="px-4 py-3 text-left font-semibold">Check-in Completion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {managerEffectiveness.map((manager) => (
+                    <tr key={manager.managerName} className="border-t border-white/10 transition hover:bg-emerald-500/[0.08]">
+                      <td className="px-4 py-3 font-medium text-white">{manager.managerName}</td>
+                      <td className="px-4 py-3 text-white/60">{manager.directReports}</td>
+                      <td className="px-4 py-3 text-white/60">{manager.sheetsApproved}</td>
+                      <td className="px-4 py-3 text-white/60">{manager.avgDaysToApprove}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${completionClassName(manager.checkinCompletionRate)}`}>
+                          {manager.checkinCompletionRate}%
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
