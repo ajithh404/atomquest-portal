@@ -63,14 +63,14 @@ const config: Config = {
   			}
   		},
   		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			DEFAULT: '10px',
+  			lg: '16px',
+  			xl: '20px',
+  			full: '9999px'
   		},
   		fontFamily: {
   			sans: [
-  				'var(--font-sans)',
-  				'system-ui',
+  				'Inter',
   				'sans-serif'
   			]
   		},

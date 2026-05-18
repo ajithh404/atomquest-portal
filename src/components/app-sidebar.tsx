@@ -5,7 +5,11 @@ import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useProfile } from '@/components/profile-provider';
-import { getRoleLabel } from '@/lib/auth';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +21,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from '@/components/ui/sidebar';
 import {
   DropdownMenu,
@@ -119,6 +122,17 @@ function getRoleBadgeVariant(role: UserRole): 'default' | 'secondary' | 'destruc
   }
 }
 
+function getSidebarRoleLabel(role: UserRole) {
+  switch (role) {
+    case 'admin':
+      return 'Admin';
+    case 'manager':
+      return 'Manager';
+    default:
+      return 'Employee';
+  }
+}
+
 export function AppSidebar() {
   const { profile } = useProfile();
   const router = useRouter();
@@ -160,15 +174,15 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar variant="inset" className="p-0">
+    <Sidebar variant="inset" className="w-[260px] min-w-[260px] p-0">
       <SidebarHeader className="border-b border-white/10">
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex items-center gap-3 rounded-xl px-2 py-2">
               <Image src="/logo.png" width={32} height={32} alt="AtomQuest logo" className="h-8 w-8 rounded-lg bg-white object-cover shadow-sm" />
               <div className="flex flex-col">
-                <span className="text-sm font-semibold tracking-tight text-white">AtomQuest</span>
-                <span className="text-[11px] text-white/55">Every target. Every quarter.</span>
+                <span className="text-sm font-bold tracking-tight text-white">AtomQuest</span>
+                <span className="text-[11px] font-normal text-white/45">Every target. Every quarter.</span>
               </div>
             </div>
           </SidebarMenuItem>
@@ -223,24 +237,31 @@ export function AppSidebar() {
         </div>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size="lg" className="h-auto rounded-xl border border-white/10 bg-white/[0.06] p-3 text-white data-[state=open]:bg-white/10">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-emerald-600 text-white text-xs font-medium">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col flex-1 text-left text-sm leading-tight">
-                    <span className="font-medium truncate text-white">{profile.name}</span>
-                    <span className="text-xs text-white/50 truncate">{profile.email}</span>
-                  </div>
-                  <Badge variant={getRoleBadgeVariant(profile.role as UserRole)} className="text-[10px] px-1.5">
-                    {getRoleLabel(profile.role as UserRole)}
-                  </Badge>
-                  <ChevronUp className="ml-auto w-4 h-4 text-white/50" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
+              <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuButton size="lg" className="h-auto rounded-xl border border-white/10 bg-white/[0.06] p-3 text-white data-[state=open]:bg-white/10">
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarFallback className="bg-emerald-600 text-white text-xs font-medium">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex min-w-0 flex-1 flex-col text-left text-sm leading-tight">
+                        <span className="max-w-[160px] truncate font-medium text-white">{profile.name}</span>
+                        <span className="max-w-[160px] truncate text-xs text-white/50">{profile.email}</span>
+                      </div>
+                      <Badge variant={getRoleBadgeVariant(profile.role as UserRole)} className="shrink-0 whitespace-nowrap px-2 text-[10px]">
+                        {getSidebarRoleLabel(profile.role as UserRole)}
+                      </Badge>
+                      <ChevronUp className="ml-auto h-4 w-4 shrink-0 text-white/50" />
+                    </SidebarMenuButton>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent side="right" align="center">
+                  {profile.name} · {getSidebarRoleLabel(profile.role as UserRole)}
+                </TooltipContent>
+              </Tooltip>
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
                 side="top"
@@ -251,7 +272,7 @@ export function AppSidebar() {
                   <p className="text-sm font-medium">{profile.name}</p>
                   <p className="text-xs text-muted-foreground">{profile.email}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {profile.department && `${profile.department} · `}{getRoleLabel(profile.role as UserRole)}
+                    {profile.department && `${profile.department} · `}{getSidebarRoleLabel(profile.role as UserRole)}
                   </p>
                 </div>
                 <DropdownMenuSeparator />
@@ -271,8 +292,6 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-
-      <SidebarRail />
     </Sidebar>
   );
 }
